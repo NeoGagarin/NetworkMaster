@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Full validation of the working tree before it leaves the machine: static checks, clippy,
+# rustdoc, cargo-deny, the credential boundary and the test suite. Bypass with `--no-verify`.
+set -euo pipefail
+exec bash "$(git rev-parse --show-toplevel)/scripts/check.sh" all

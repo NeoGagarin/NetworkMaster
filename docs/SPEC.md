@@ -100,7 +100,7 @@ Go would ship faster. `gosnmp`, `golang.org/x/crypto/ssh` and Bubble Tea are all
 
 A **layered core with a thin TUI shell.** The TUI, the CLI and the MCP server are three front ends over one library. Everything the TUI can show, the CLI can print and the MCP server can serve. This is what makes external harness integration cheap and what makes the project testable without a terminal.
 
-```
+```text
                  +-------------+  +-------------+  +-------------+
                  |   nm-tui    |  |   nm-cli    |  |   nm-mcp    |
                  |  (ratatui)  |  |   (clap)    |  |   (rmcp)    |
@@ -134,7 +134,7 @@ A **layered core with a thin TUI shell.** The TUI, the CLI and the MCP server ar
 
 Cargo workspace. One crate per box above plus fixtures.
 
-```
+```text
 networkmaster/
 ├── Cargo.toml                 # workspace
 ├── crates/
@@ -295,7 +295,7 @@ Secrets are never part of `DeviceFacts`. Parsers strip them at parse time (EdgeO
 
 ### 7.1 Model
 
-```
+```text
 CredentialProfile
   id, name, kind: SshPassword | SshKey | ApiToken | HttpBasic | SnmpV2c | SnmpV3
   storage: SessionOnly | WindowsCredentialManager
@@ -349,7 +349,8 @@ pub trait Collector: Send + Sync {
 Hardcoded `const` arrays per family. Every command is read-only. This list is the single most security-relevant piece of code in the project and lives in one file with a top-of-file comment explaining the invariant. **Exact command sets must be validated against real hardware in M1 and M2; the lists below are the starting hypothesis. Items marked `(verify)` are uncertain.**
 
 **airOS (airMAX, airFiber, LTU)**
-```
+
+```text
 cat /etc/version
 cat /etc/board.info
 uptime
@@ -368,7 +369,8 @@ cat /proc/net/arp
 
 **EdgeOS (EdgeRouter)**
 Commands run through the Vyatta operational wrapper so they work from a non-interactive channel.
-```
+
+```text
 show version
 show interfaces
 show interfaces ethernet detail        (verify exact form)
@@ -395,7 +397,8 @@ cat /proc/net/arp
 ### 8.4 HTTP surfaces
 
 **UISP** (base `https://<host>/nms/api/v2.1/`, header `x-auth-token`)
-```
+
+```text
 GET /devices
 GET /devices/{id}
 GET /devices/{id}/statistics?interval=...
@@ -406,7 +409,8 @@ GET /devices/{id}/interfaces           (verify against the instance's OpenAPI at
 ```
 
 **UniFi Network, Integration API** (UniFi Network 9.0+, header `X-API-KEY`)
-```
+
+```text
 GET /proxy/network/integration/v1/sites
 GET /proxy/network/integration/v1/sites/{siteId}/devices
 GET /proxy/network/integration/v1/sites/{siteId}/devices/{deviceId}
@@ -414,7 +418,8 @@ GET /proxy/network/integration/v1/sites/{siteId}/clients
 ```
 
 **UniFi Network, legacy API** (older controllers; session cookie after login)
-```
+
+```text
 POST /api/auth/login            # UniFi OS consoles
 POST /api/login                 # software controller
 GET  /proxy/network/api/s/{site}/stat/device
@@ -617,6 +622,7 @@ Device-controlled strings are the attack surface: an SSID named `ignore prior in
 `netmaster mcp serve [--snapshot <id>]` starts an MCP server over stdio exposing the §10.2 tool belt plus `list_snapshots()`. No network access, no credentials loaded, no write tools. It reads from the SQLite database only. The command prints a ready-to-paste config block for Claude Code (`.mcp.json`), Claude Desktop, Codex and Cursor.
 
 Example for Claude Code:
+
 ```json
 {
   "mcpServers": {
@@ -634,7 +640,7 @@ Redaction applies to MCP responses too, using the same session mapping, because 
 
 `netmaster export --snapshot <id> --out ./review/` writes:
 
-```
+```text
 review/
 ├── README.md            # how to use this bundle with Claude Code / Codex / any chat
 ├── SUMMARY.md           # the same summary document the built-in AI layer uses
@@ -688,7 +694,7 @@ Welcome → choose profile (operator / learner) → "This tool only reads. Here 
 
 The binary is one executable. With no arguments it launches the TUI.
 
-```
+```text
 netmaster                                   # TUI
 netmaster inventory add <addr> [--family airos|edgeos|unifi|uisp] [--site S] [--name N]
 netmaster inventory import --file devices.csv
@@ -722,7 +728,7 @@ SQLite file at `%LOCALAPPDATA%\NetworkMaster\netmaster.db` (XDG data dir on Linu
 
 Tables:
 
-```
+```text
 devices                 (id, display_name, address, port, vendor, family, role, site_id, profile_id, source, enrolled, tags_json, created_at, updated_at)
 sites                   (id, name, notes)
 credential_profiles     (id, name, kind, storage, keyring_ref, scope_hint)        -- no secrets

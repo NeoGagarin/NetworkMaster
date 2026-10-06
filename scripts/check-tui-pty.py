@@ -1,4 +1,5 @@
 """Linux PTY smoke test: real event loop, keys, resize and terminal restoration."""
+
 import fcntl
 import os
 import pty
@@ -10,6 +11,7 @@ import sys
 import tempfile
 import termios
 import time
+from pathlib import Path
 
 
 def drain(master, seconds=0.4):
@@ -26,7 +28,7 @@ def drain(master, seconds=0.4):
     return bytes(data)
 
 
-binary = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "target/debug/netmaster")
+binary = Path(sys.argv[1] if len(sys.argv) > 1 else "target/debug/netmaster").resolve()
 for key, expected in [(b"q", 0), (b"\x03", 130)]:
     master, slave = pty.openpty()
     before = termios.tcgetattr(slave)
@@ -35,9 +37,13 @@ for key, expected in [(b"q", 0), (b"\x03", 130)]:
         env = dict(os.environ, TERM="xterm-256color", NETMASTER_NET="deny")
         process = subprocess.Popen(
             [binary, "--data-dir", directory, "--ascii", "--no-color"],
-            stdin=slave, stdout=slave, stderr=slave, env=env,
+            stdin=slave,
+            stdout=slave,
+            stderr=slave,
+            env=env,
             start_new_session=True,
-            preexec_fn=lambda: fcntl.ioctl(0, termios.TIOCSCTTY, 0),
+            # Single-threaded script; TIOCSCTTY must run in the child before exec.
+            preexec_fn=lambda: fcntl.ioctl(0, termios.TIOCSCTTY, 0),  # noqa: PLW1509
         )
         try:
             output = b""

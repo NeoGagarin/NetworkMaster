@@ -1,0 +1,7 @@
+# Link check for Markdown: https://lychee.cli.rs/
+# Hooks and CI run offline so only repository-relative links and anchors are checked;
+# pass --offline=false on the command line to also probe external URLs.
+offline = true
+include_fragments = "anchor-only"
+no_progress = true
+exclude_path = ['target']

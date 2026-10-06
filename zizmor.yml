@@ -1,0 +1,7 @@
+# GitHub Actions security audit: https://docs.zizmor.sh/configuration/
+rules:
+  adhoc-packages:
+    ignore:
+      # The lint job installs markdownlint-cli2 at an exact version. A package lockfile kept only
+      # for a lint tool is more upkeep than it is worth; Go and uv installs are already pinned.
+      - ci.yml

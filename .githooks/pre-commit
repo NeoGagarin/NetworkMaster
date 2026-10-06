@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Fast static checks on the staged files. Bypass once with `git commit --no-verify`.
+set -euo pipefail
+exec bash "$(git rev-parse --show-toplevel)/scripts/check.sh" --staged static

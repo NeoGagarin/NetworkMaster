@@ -1,0 +1,19 @@
+// Markdown lint: https://github.com/DavidAnson/markdownlint-cli2
+{
+  "config": {
+    "default": true,
+    // Prose is written one paragraph per line; tables and diagrams run long.
+    "MD013": false,
+    // Crate READMEs are single-sentence summaries without a heading.
+    "MD041": false,
+    // Tables are not column-aligned; alignment churn adds nothing to review.
+    "MD060": false,
+    // Bold labels introduce command listings in SPEC.md.
+    "MD036": false,
+    // Trailing spaces in code spans are meaningful (forbidden-verb prefixes such as `set `).
+    "MD038": false,
+    "MD024": { "siblings_only": true }
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["target/**", "**/target/**"]
+}

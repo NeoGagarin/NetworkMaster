@@ -1,0 +1,11 @@
+# Lint and format the Python helper scripts: https://docs.astral.sh/ruff/
+line-length = 100
+target-version = "py310"
+
+[lint]
+select = ["E", "W", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "RET", "PIE", "PTH", "PL", "S", "RUF"]
+ignore = [
+  "S101", # assert is the reporting mechanism in the smoke tests
+  "S603", # subprocess calls only run cargo and the netmaster binary with fixed arguments
+  "S607", # cargo is resolved through PATH by design
+]

@@ -28,15 +28,50 @@ Adding does not enroll or resolve DNS. M0 opens no network connection. See [CLI.
 
 ## Validation
 
+`scripts/check.sh` runs every check; the git hooks and the CI `lint` job call the same script, so a local pass means the same thing everywhere. Run it from Git Bash on Windows:
+
 ```text
-cargo fmt --all -- --check
-cargo clippy --locked --workspace --all-targets -- -D warnings
-cargo test --locked --workspace
-cargo install --locked cargo-deny
-cargo deny check
-python scripts/check-dependency-boundaries.py
-bash scripts/check-no-direct-connect.sh
+bash scripts/check.sh            # static: fast checks that do not compile
+bash scripts/check.sh rust       # clippy, rustdoc, cargo-deny, AI credential boundary
+bash scripts/check.sh test       # cargo test for the workspace
+bash scripts/check.sh all        # everything above, which is what pre-push runs
 ```
+
+`SKIP=clippy,test bash scripts/check.sh all` skips named checks for one run. A missing optional tool is reported and skipped locally; `--strict` (used by CI) makes it a failure.
+
+| Check | Tool | Configuration |
+|-------|------|---------------|
+| Rust formatting and lints | rustfmt, clippy (pedantic, `-D warnings`), rustdoc (`-D warnings`) | `rustfmt.toml`, `clippy.toml`, `[workspace.lints]` |
+| Dependencies | cargo-deny (advisories, licenses, bans, sources), cargo-machete (unused) | `deny.toml`, `[package.metadata.cargo-machete]` |
+| Invariants | socket boundary, AI credential boundary | `scripts/check-no-direct-connect.sh`, `scripts/check-dependency-boundaries.py` |
+| Secrets | gitleaks over staged changes or the full history | `.gitleaks.toml` |
+| Spelling | typos | `typos.toml` |
+| Whitespace | `git diff --check` | `.editorconfig`, `.gitattributes` |
+| TOML | taplo | `.taplo.toml` |
+| Shell | shellcheck, shfmt | `.shellcheckrc`, `.editorconfig` |
+| Python | ruff (lint and format) | `ruff.toml` |
+| Markdown | markdownlint-cli2, lychee (offline: relative links and anchors) | `.markdownlint-cli2.jsonc`, `lychee.toml` |
+| GitHub Actions | actionlint, zizmor (actions are pinned to commit SHAs) | `zizmor.yml` |
+
+Install the non-Cargo tools once. The CI `lint` job pins the exact versions:
+
+```text
+cargo install --locked cargo-deny cargo-machete typos-cli taplo-cli lychee
+go install github.com/rhysd/actionlint/cmd/actionlint@latest
+go install github.com/zricethezav/gitleaks/v8@latest
+npm install --global markdownlint-cli2
+uv tool install ruff          # or: pipx install ruff
+scoop install shellcheck shfmt zizmor   # Linux: use the distribution packages or `pipx install zizmor`
+```
+
+### Git hooks
+
+Enable the versioned hooks once per clone with `bash scripts/install-hooks.sh`, which sets `core.hooksPath` to `.githooks`:
+
+- **pre-commit** runs the static stage on staged files only, which usually takes a few seconds.
+- **pre-push** runs `check.sh all`, the same checks as CI apart from the platform matrix and the PTY and egress smoke tests.
+
+Hooks check the working-tree copy of each staged file, so stage whole files rather than partial hunks. `git commit --no-verify` or `git push --no-verify` bypasses a hook once; CI still runs every check.
 
 Python 3 is needed for the graph check and the Linux TUI PTY smoke test (`python3 scripts/check-tui-pty.py`). On Windows use Git Bash for the shell script. On Linux `bash scripts/check-egress.sh` runs local CLI operations in a network namespace, or tests the deny-all factory if namespaces are unavailable. `NETMASTER_NET=deny` makes AppService construct that factory and skip DNS entirely. CI runs the Windows and Ubuntu matrix plus a Linux egress workflow.
 

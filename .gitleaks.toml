@@ -1,0 +1,10 @@
+# Secret scanning: https://github.com/gitleaks/gitleaks
+# Live credentials and unsanitized device output must never be committed (CONTRIBUTING.md).
+title = "NetworkMaster gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Build output and generated lockfiles"
+paths = ['''^target/''', '''(^|/)Cargo\.lock$''']

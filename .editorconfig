@@ -7,3 +7,7 @@ indent_style = space
 indent_size = 4
 [*.{md,yml,yaml}]
 indent_size = 2
+[*.sh]
+# Read by shfmt.
+shell_variant = bash
+switch_case_indent = true

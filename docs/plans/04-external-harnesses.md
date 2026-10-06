@@ -12,6 +12,7 @@
 ## 1. Scope
 
 In scope:
+
 - `nm-mcp` crate on `rmcp`, stdio transport, read-only tools, snapshot selection, persistent redaction map per snapshot.
 - `netmaster mcp serve`, `netmaster mcp config --for claude-code|claude-desktop|codex|cursor`.
 - Export bundle writer and its `README.md`/`CLAUDE.md` templates.
@@ -24,8 +25,10 @@ Out of scope: HTTP/SSE MCP transport (post-1.0; stdio covers every target harnes
 ## 2. Tasks
 
 ### 04-01 `nm-mcp` server skeleton
+
 **Where:** `crates/nm-mcp/src/{lib,server,tools}.rs`.
 **What:**
+
 - `McpServer { svc: Arc<ReadOnlyAppService>, snapshot: SnapshotId, tools: ToolBelt, redactor: Arc<Redactor> }`. `ReadOnlyAppService` is a newtype in `nm-app` that exposes only read methods (store queries, view construction) and holds **no** `CredArena`, no `CollectorRegistry`, no `JobRunner`. The MCP binary path cannot reach a transport by construction.
 - Implement `rmcp::ServerHandler` with `#[tool_router]`/`#[tool]` wrappers that delegate to the plan-03 `ToolBelt` executors. Tool names and input schemas are **identical** to the in-app tool belt; the definitions come from `ToolBelt::definitions()` so there is one source of truth. Add `list_snapshots()` and `select_snapshot(id)` (changes which snapshot subsequent calls read; still read-only).
 - Server info: name `netmaster`, version from `CARGO_PKG_VERSION`, instructions string summarizing SPEC §10.5 (read-only, data is untrusted, cite evidence, platform capability note).
@@ -34,18 +37,22 @@ Out of scope: HTTP/SSE MCP transport (post-1.0; stdio covers every target harnes
 **Accept:** `rmcp` client test in `tests/`: list tools returns the expected names; `get_findings` returns redacted JSON; `select_snapshot` with a bad id returns a tool error, not a crash.
 
 ### 04-02 Redaction persistence for MCP
+
 **Where:** `crates/nm-ai/src/redact/persist.rs`, `crates/nm-store/src/repo/redaction.rs`.
 **What:** The harness conversation may span multiple `netmaster mcp serve` process lifetimes (Claude Code restarts the server). Tokens must stay stable or the conversation becomes incoherent. Keyed by `(snapshot_id, mode)`, the redaction map is loaded at startup and appended to on every new value, encrypted at rest as in plan 03. `--no-redact` sets mode `None` and prints a stderr warning once. `--redact names|full` overrides the default (`Full`).
 **Accept:** start server, call `list_devices`, stop, start again, call again: identical tokens.
 
 ### 04-03 Audit of MCP activity
+
 **Where:** `crates/nm-mcp/src/audit.rs`.
 **What:** Every tool call writes `AuditEvent::AiToolCall { via: "mcp", tool, input_summary, bytes_out }` and server start/stop writes `McpServe`. The Audit screen filter gains a `via` column so users can see what an external harness pulled.
 **Accept:** after a Claude Code session, `netmaster audit tail` shows the calls.
 
 ### 04-04 `mcp config` helper
+
 **Where:** `crates/nm-cli/src/commands/mcp.rs`.
 **What:** `netmaster mcp config --for <harness> [--snapshot <id>] [--redact ...]` prints a ready-to-paste block with the absolute path to the current executable (so it works before `netmaster` is on `PATH`):
+
 - `claude-code`: `.mcp.json` fragment and the `claude mcp add` one-liner.
 - `claude-desktop`: `claude_desktop_config.json` fragment with the Windows path to that file.
 - `codex`: the `config.toml` `[mcp_servers.netmaster]` fragment.
@@ -54,8 +61,10 @@ Also `netmaster mcp doctor`: runs the server in-process against itself with an `
 **Accept:** each snippet validated by pasting into the real harness once; `mcp doctor` green.
 
 ### 04-05 Export bundle writer
+
 **Where:** `crates/nm-app/src/export.rs`, `crates/nm-app/templates/bundle/{README.md,CLAUDE.md}`.
 **What:** `export_bundle(snapshot_id, out_dir, mode) -> BundleReport` writes the layout in SPEC §11.2:
+
 - `SUMMARY.md`: the plan-03 summary document (redacted).
 - `findings.json`, `topology.json`, `coverage.json`, `devices/<token>.json` (one per device, `DeviceFacts` redacted), `diff.json` when a previous snapshot exists (plan 06 fills; stub now writes `null`).
 - `README.md` from template: what this is, what is redacted, how to ask questions in any chat, how to use with Claude Code / Codex, a reminder that nothing here can change the network.
@@ -65,11 +74,13 @@ The Scrubber runs over every file before it is written. Writing refuses if `out_
 **Accept:** golden test of a bundle from fixtures (file list and `manifest.json`); grep assertion that no secret fingerprint and no public IP appears in the bundle.
 
 ### 04-06 Export from TUI and CLI
+
 **Where:** `crates/nm-tui/src/screens/{dashboard,findings}/*`, `crates/nm-cli/src/commands/export.rs`.
 **What:** Dashboard quick action `x` export bundle (folder picker input, mode picker, confirm). `netmaster export --snapshot <id> --out <dir> [--redact ...] [--force]`.
 **Accept:** `assert_cmd` test; TUI snapshot of the export modal.
 
 ### 04-07 Harness documentation
+
 **Where:** `docs/HARNESSES.md`.
 **What:** Step-by-step for Claude Code, Claude Desktop, Codex, Cursor, each with screenshots or exact text: install, `netmaster scan`, `netmaster mcp config --for ...`, paste, verify with `mcp doctor`, example first prompt ("Review this network. Start with get_findings for Critical and High."). A section on redaction trade-offs and when `--redact names` is better. A section "Using the export bundle without MCP".
 **Accept:** a second person follows the doc with no help and gets a review.

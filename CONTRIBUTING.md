@@ -2,7 +2,7 @@
 
 Start with [DEVELOPMENT.md](docs/DEVELOPMENT.md), then read the specification and the plan for the milestone you are changing. Small, reviewable changes, scrubbed hardware fixtures and clear rule explanations are welcome. Follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-Before submitting, run `cargo fmt --all -- --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test --workspace`, `cargo deny check`, and both boundary checks in `scripts/`. CI runs on Windows and Linux. Review changed snapshot files as terminal output, not just a passing test.
+Enable the git hooks with `bash scripts/install-hooks.sh`. Before submitting, run `bash scripts/check.sh all`, which covers formatting, clippy, rustdoc, tests, `cargo deny`, the boundary checks in `scripts/` and the documentation, shell, Python and workflow linters described in [DEVELOPMENT.md](docs/DEVELOPMENT.md#validation). CI runs on Windows and Linux. Review changed snapshot files as terminal output, not just a passing test.
 
 The no-write invariant is permanent. SSH commands may be defined only in `nm-collect/src/allowlist.rs`. Each addition needs the forbidden-verb check and approval by a reviewer other than its author. All socket creation belongs in `nm-collect/src/net.rs`. `nm-ai` must have no direct or indirect dependency on `nm-creds`. Never commit live credentials or unsanitized device output.
 
