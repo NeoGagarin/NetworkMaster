@@ -7,8 +7,7 @@ version = "0.0.1"
 edition = "2021"
 rust-version = "1.92"
 license = "Apache-2.0 OR MIT"
-# Set the canonical public repository URL when one is assigned (ADR 0003).
-repository = "https://github.com/networkmaster/networkmaster"
+repository = "https://github.com/NeoGagarin/NetworkMaster"
 
 [workspace.dependencies]
 nm-core = { path = "crates/nm-core" }
