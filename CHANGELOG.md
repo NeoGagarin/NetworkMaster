@@ -14,3 +14,4 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 - Windows/Linux CI, dependency boundaries, forbidden-command checks and offline egress workflow.
 - Dual licenses, contribution/security guidance and architecture decisions.
 - `scripts/check.sh` static-analysis suite (gitleaks, typos, taplo, shellcheck, shfmt, ruff, markdownlint, lychee, actionlint, zizmor, cargo-machete, rustdoc) shared by versioned pre-commit/pre-push hooks and a CI lint job; GitHub Actions pinned to commit SHAs.
+- `AGENTS.md` guide for coding agents (imported by `CLAUDE.md`) and a Claude Code PostToolUse hook that formats edited files.

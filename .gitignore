@@ -4,3 +4,5 @@
 *.db-wal
 *.snap.new
 .env
+.claude/settings.local.json
+.claude/worktrees/
