@@ -1,0 +1,81 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+version = "0.0.1"
+edition = "2021"
+rust-version = "1.92"
+license = "Apache-2.0 OR MIT"
+# Set the canonical public repository URL when one is assigned (ADR 0003).
+repository = "https://github.com/networkmaster/networkmaster"
+
+[workspace.dependencies]
+nm-core = { path = "crates/nm-core" }
+nm-store = { path = "crates/nm-store" }
+nm-creds = { path = "crates/nm-creds" }
+nm-collect = { path = "crates/nm-collect" }
+nm-collect-ubiquiti = { path = "crates/nm-collect-ubiquiti" }
+nm-analyze = { path = "crates/nm-analyze" }
+nm-ai = { path = "crates/nm-ai" }
+nm-mcp = { path = "crates/nm-mcp" }
+nm-app = { path = "crates/nm-app" }
+nm-tui = { path = "crates/nm-tui" }
+tokio = { version = "1.48", features = ["rt-multi-thread", "macros", "net", "signal", "sync", "time"] }
+tokio-util = "0.7"
+async-trait = "0.1"
+ratatui = { version = "0.30.2", default-features = false, features = ["crossterm", "crossterm_0_29", "layout-cache"] }
+crossterm = { version = "0.29", features = ["event-stream"] }
+futures-util = "0.3"
+clap = { version = "4.5", features = ["derive"] }
+russh = "=0.54.6"
+russh-keys = "0.49"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+schemars = "1"
+rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite_migration = "1.3.1"
+keyring = "3"
+secrecy = "0.8"
+zeroize = { version = "1.8", features = ["derive"] }
+rmcp = { version = "0.8", features = ["transport-io"] }
+snmp2 = "0.4"
+ipnet = { version = "2", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+anyhow = "1"
+insta = "1"
+trybuild = "1"
+tempfile = "3"
+assert_cmd = "2"
+predicates = "3"
+ulid = { version = "1", features = ["serde"] }
+time = { version = "0.3", features = ["serde", "formatting", "parsing"] }
+dirs = "6"
+sha2 = "0.10"
+base64 = "0.22"
+hex = "0.4"
+percent-encoding = "2"
+rpassword = "7"
+regex = "1"
+if-addrs = "0.15"
+# cargo-dist is a release tool; install separately rather than link it into netmaster.
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+must_use_candidate = "allow"
+module_name_repetitions = "allow"
+too_many_lines = "allow"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true
+opt-level = 3

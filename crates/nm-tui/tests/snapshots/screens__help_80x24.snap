@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/screens.rs
+expression: output
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Help  |  pre-alpha 0.0.1                                    |
++------------------------------------------------------------------------------+
++Global keys-------------------------------------------------------------------+
+|1       Dashboard                                                             |
+|2       Inventory (M1)                                                        |
+|3       Credentials (M1)                                                      |
+|4       Scan (M1)                                                             |
+|5       Findings (M2)                                                         |
+|6       Devices (M1)                                                          |
+|7       Topology (M2)                                                         |
+|8       AI (M3)                                                               |
+|9       Audit (later)                                                         |
+|0       Settings                                                              |
+|?       Help                                                                  |
+|Esc     Dashboard / dismiss confirmation                                      |
+|q       Quit (confirm if a job is active)                                     |
+|Ctrl+C  Cancel active job; press again to quit                                |
+|                                                                              |
+|Only explicitly enrolled devices may be contacted.                            |
+|M0 has no network collectors. Credentials last for this process only.         |
++------------------------------------------------------------------------------+
+Ready. No network actions in M0.
+1 Dashboard  0 Settings  ? Help  q Quit  Ctrl+C Cancel

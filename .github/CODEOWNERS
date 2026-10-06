@@ -1,0 +1,5 @@
+# Bootstrap maintainer email; verify GitHub account association before public hosting.
+/crates/nm-collect/src/allowlist.rs cs18hyacinthgagarinneo@gmail.com
+/SECURITY.md cs18hyacinthgagarinneo@gmail.com
+/deny.toml cs18hyacinthgagarinneo@gmail.com
+/scripts/check-dependency-boundaries.py cs18hyacinthgagarinneo@gmail.com

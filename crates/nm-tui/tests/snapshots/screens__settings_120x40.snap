@@ -1,0 +1,44 @@
+---
+source: crates/nm-tui/tests/screens.rs
+expression: output
+---
++Read-only network assessment------------------------------------------------------------------------------------------+
+|NetworkMaster  |  Settings  |  pre-alpha 0.0.1                                                                        |
++----------------------------------------------------------------------------------------------------------------------+
++Settings--------------------------------------------------------------------------------------------------------------+
+|Theme: Dark                                                                                                           |
+|Borders: ASCII                                                                                                        |
+|Data directory: <data-dir>                                                                                            |
+|Version: 0.0.1                                                                                                        |
+|                                                                                                                      |
+|Providers: none (planned for M3)                                                                                      |
+|                                                                                                                      |
+|d Dark   h High contrast   n No color                                                                                 |
+|Theme changes are saved locally. NO_COLOR takes precedence.                                                           |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
+|                                                                                                                      |
++----------------------------------------------------------------------------------------------------------------------+
+Ready. No network actions in M0.
+1 Dashboard  0 Settings  ? Help  q Quit  Ctrl+C Cancel

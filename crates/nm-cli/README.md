@@ -1,0 +1,1 @@
+The netmaster binary and complete command tree. No arguments starts the TUI; M0 implements local inventory, session credential creation, audit tail and forgetting secrets. Later commands report their planned milestone with exit code 2.

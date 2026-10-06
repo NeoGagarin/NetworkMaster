@@ -1,0 +1,29 @@
+[package]
+name = "nm-cli"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+[lints]
+workspace = true
+[[bin]]
+name = "netmaster"
+path = "src/main.rs"
+[dependencies]
+nm-core.workspace = true
+nm-app.workspace = true
+nm-store.workspace = true
+nm-tui.workspace = true
+clap.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+rpassword.workspace = true
+zeroize.workspace = true
+[dev-dependencies]
+assert_cmd.workspace = true
+predicates.workspace = true
+tempfile.workspace = true

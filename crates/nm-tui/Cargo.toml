@@ -1,0 +1,21 @@
+[package]
+name = "nm-tui"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+[lints]
+workspace = true
+[dependencies]
+nm-core.workspace = true
+nm-app.workspace = true
+nm-store.workspace = true
+ratatui.workspace = true
+crossterm.workspace = true
+futures-util.workspace = true
+tokio.workspace = true
+anyhow.workspace = true
+[dev-dependencies]
+insta.workspace = true
+tempfile.workspace = true

@@ -1,0 +1,20 @@
+name: Egress
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  no-egress:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read pinned toolchain
+        id: rust
+        run: echo "version=$(sed -n 's/^channel = "\(.*\)"/\1/p' rust-toolchain.toml)" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.rust.outputs.version }}
+      - uses: Swatinem/rust-cache@v2
+      - name: Offline CLI and egress invariants
+        run: bash scripts/check-egress.sh

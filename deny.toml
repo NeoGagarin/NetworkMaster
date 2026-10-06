@@ -1,0 +1,18 @@
+[graph]
+targets = ["x86_64-pc-windows-msvc", "x86_64-unknown-linux-gnu"]
+
+[advisories]
+version = 2
+
+[licenses]
+allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.0", "Zlib", "MPL-2.0"]
+# This closed allowlist excludes GPL and AGPL licenses.
+
+[bans]
+multiple-versions = "warn"
+wildcards = "allow"
+deny = [{ name = "nm-creds", wrappers = ["nm-collect", "nm-app"], reason = "Secrets belong only to collection and orchestration; AI cannot depend on credentials." }]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
