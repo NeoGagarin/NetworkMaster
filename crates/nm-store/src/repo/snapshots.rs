@@ -80,10 +80,13 @@ impl<'a> SnapshotRepo<'a> {
                 )?
                 .collect::<rusqlite::Result<_>>()?;
         }
-        let mut stmt = conn.prepare("SELECT id,rule_id,severity,category,title,evidence_json,devices_json,confidence,explanation FROM findings WHERE snapshot_id=?1 ORDER BY severity DESC,id")?;
-        let findings = stmt
+        let mut stmt = conn.prepare("SELECT id,rule_id,severity,category,title,evidence_json,devices_json,confidence,explanation FROM findings WHERE snapshot_id=?1")?;
+        let mut findings: Vec<nm_core::Finding> = stmt
             .query_map([snapshot_id.to_string()], super::findings::read)?
             .collect::<rusqlite::Result<_>>()?;
+        // Finding ids hash the device ids, so ordering by id would make the
+        // display order depend on inventory ids. Use the runner's order instead.
+        nm_core::Finding::sort_canonical(&mut findings);
         let started_at = serde_json::from_value(serde_json::Value::String(started))?;
         let finished_at = finished
             .map(|s| serde_json::from_value(serde_json::Value::String(s)))

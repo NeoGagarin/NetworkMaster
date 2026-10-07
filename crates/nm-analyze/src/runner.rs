@@ -42,12 +42,6 @@ pub fn evaluate_rules(
         id.copy_from_slice(&hash[..16]);
         f.id = ulid::Ulid::from_bytes(id).to_string().parse().unwrap();
     }
-    findings.sort_by(|a, b| {
-        b.severity
-            .cmp(&a.severity)
-            .then_with(|| a.rule_id.as_str().cmp(b.rule_id.as_str()))
-            .then_with(|| a.devices.cmp(&b.devices))
-            .then_with(|| a.id.cmp(&b.id))
-    });
+    nm_core::Finding::sort_canonical(&mut findings);
     findings
 }

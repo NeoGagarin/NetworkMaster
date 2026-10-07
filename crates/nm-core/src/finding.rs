@@ -14,6 +14,22 @@ pub struct Finding {
     pub explanation: String,
     pub confidence: Confidence,
 }
+impl Finding {
+    /// The one display and persistence order: severity descending, then rule id,
+    /// then affected devices, then id. Ids hash the device ids, so any order that
+    /// consults the id first would change with the inventory.
+    pub fn canonical_cmp(a: &Self, b: &Self) -> std::cmp::Ordering {
+        b.severity
+            .cmp(&a.severity)
+            .then_with(|| a.rule_id.as_str().cmp(b.rule_id.as_str()))
+            .then_with(|| a.devices.cmp(&b.devices))
+            .then_with(|| a.id.cmp(&b.id))
+    }
+    /// Sort into [`Self::canonical_cmp`] order.
+    pub fn sort_canonical(findings: &mut [Self]) {
+        findings.sort_by(Self::canonical_cmp);
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum Severity {
     Info,

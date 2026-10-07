@@ -65,13 +65,7 @@ impl<'a> FindingsRepo<'a> {
                 read,
             )?
             .collect::<rusqlite::Result<Vec<_>>>()?;
-        out.sort_by(|a, b| {
-            b.severity
-                .cmp(&a.severity)
-                .then_with(|| a.rule_id.as_str().cmp(b.rule_id.as_str()))
-                .then_with(|| a.devices.cmp(&b.devices))
-                .then_with(|| a.id.cmp(&b.id))
-        });
+        Finding::sort_canonical(&mut out);
         Ok(out)
     }
 }
