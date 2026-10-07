@@ -1,0 +1,31 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::proc_net_dev::parse(&read(\"proc-net-dev.txt\")).unwrap()"
+---
+[
+  {
+    "name": "eth0",
+    "mac": null,
+    "description": null,
+    "admin_up": null,
+    "oper_up": null,
+    "speed_mbps": null,
+    "duplex": null,
+    "counters": {
+      "rx_bytes": 1000,
+      "tx_bytes": 2000,
+      "rx_packets": 10,
+      "tx_packets": 20,
+      "rx_errors": 0,
+      "tx_errors": 1,
+      "rx_dropped": 0,
+      "tx_dropped": 0
+    },
+    "addresses": [],
+    "role": null,
+    "role_confidence": null,
+    "firewall_in": null,
+    "firewall_out": null,
+    "firewall_local": null
+  }
+]

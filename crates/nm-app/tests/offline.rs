@@ -15,7 +15,7 @@ async fn app_opens_and_reads_without_network_and_denies_socket_creation() {
         .unwrap()
         .is_empty());
     assert!(AuditRepo::new(&svc.db).tail(100).unwrap().is_empty());
-    assert!(svc.collectors.is_empty());
+    assert!(svc.collectors.get(nm_core::DeviceFamily::AirOs).is_some());
     let addr = "127.0.0.1:22".parse().unwrap();
     assert_eq!(
         svc.net.tcp_connect(addr).await.unwrap_err().kind(),
@@ -41,6 +41,7 @@ async fn persistent_storage_is_explicitly_unimplemented() {
         kind: CredentialKind::ApiToken,
         storage: StorageMode::WindowsCredentialManager,
         scope_hint: String::new(),
+        is_vendor_default: false,
     };
     let error = svc
         .add_credential(

@@ -1,0 +1,4 @@
+model = "ER-X"
+firmware = "2.0.9-hotfix.7"
+synthetic = true
+role = "router"

@@ -1,0 +1,4 @@
+Route Source Routes FIB
+connected 3 3
+static 1 1
+ospf 2 2

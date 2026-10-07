@@ -24,6 +24,10 @@ impl std::fmt::Debug for SecretMaterial {
     }
 }
 impl SecretMaterial {
+    /// Compare an explicitly supplied credential with the vendor default locally.
+    pub fn is_vendor_default(&self, kind: &CredentialKind) -> bool {
+        matches!((self,kind),(Self::SshPassword(s),CredentialKind::SshPassword {username}) if username == "ubnt" && s.expose_secret() == "ubnt")
+    }
     pub fn matches(&self, kind: &CredentialKind) -> bool {
         match (self, kind) {
             (Self::SshPassword(_), CredentialKind::SshPassword { .. })

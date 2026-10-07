@@ -1,0 +1,5 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::wstalist::parse(&read(\"wstalist.json\")).unwrap()"
+---
+[]

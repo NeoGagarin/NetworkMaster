@@ -1,0 +1,28 @@
+name: Hardware compatibility report
+description: Report airOS collection results from an enrolled bench device.
+title: "[Hardware] model / firmware"
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Model
+    validations:
+      required: true
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version
+    validations:
+      required: true
+  - type: textarea
+    id: scan
+    attributes:
+      label: netmaster scan --json output
+      description: Review and remove identifying information before sharing. Do not include credentials.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: observations
+    attributes:
+      label: Command availability, duration and CPU observations

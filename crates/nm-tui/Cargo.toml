@@ -8,14 +8,21 @@ repository.workspace = true
 [lints]
 workspace = true
 [dependencies]
+nm-analyze.workspace = true
 nm-core.workspace = true
 nm-app.workspace = true
 nm-store.workspace = true
+nm-collect.workspace = true
+nm-collect-ubiquiti.workspace = true
+tokio-util.workspace = true
+serde_json.workspace = true
+zeroize.workspace = true
 ratatui.workspace = true
 crossterm.workspace = true
 futures-util.workspace = true
 tokio.workspace = true
 anyhow.workspace = true
 [dev-dependencies]
+sha2.workspace = true
 insta.workspace = true
 tempfile.workspace = true

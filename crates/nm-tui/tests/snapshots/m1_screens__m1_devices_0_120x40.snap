@@ -1,0 +1,44 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment------------------------------------------------------------------------------------------+
+|NetworkMaster  |  Devices  |  pre-alpha 0.0.1                                                                         |
++----------------------------------------------------------------------------------------------------------------------+
++Snapshot 1/1 | [ ]--------------++Tab / Shift+Tab detail--------------------------------------------------------------+
+|+ Tower AP 100%                 || System │ Interfaces │ Radio │ Config │ Raw │ Coverage                              |
+|                                |+------------------------------------------------------------------------------------+
+|                                |+System------------------------------------------------------------------------------+
+|                                ||Model: Rocket Prism 5AC                                                             |
+|                                ||Firmware: 8.7.11                                                                    |
+|                                ||Hostname: fixture-host-1                                                            |
+|                                ||Uptime: 183840 seconds                                                              |
+|                                ||Load: 0.1 / 0.2 / 0.3                                                               |
+|                                ||Memory: 64 MiB total / 44 MiB free                                                  |
+|                                ||Legacy SSH: unknown                                                                 |
+|                                ||Host key changed: unknown                                                           |
+|                                ||                                                                                    |
+|                                ||Service       State     Port                                                        |
+|                                ||SSH           enabled   --                                                          |
+|                                ||Telnet        disabled  --                                                          |
+|                                ||HTTP          enabled   80                                                          |
+|                                ||HTTPS         enabled   --                                                          |
+|                                ||UPnP          disabled  --                                                          |
+|                                ||Discovery     disabled  --                                                          |
+|                                ||NTP           enabled   --                                                          |
+|                                ||SNMP          enabled                                                               |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
++--------------------------------++------------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+Tab Detail  Up/Down Device  [ ] Snapshot  / Search  R Interface role  q Quit

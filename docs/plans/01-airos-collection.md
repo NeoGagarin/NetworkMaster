@@ -203,13 +203,18 @@ Validate each on the bench against airOS 6.x and 8.x and record which are missin
 
 ---
 
-## 5. Done checklist
+## 5. Implementation status (2026-10-06)
+
+The user requested completion of implementation and local tests while leaving hardware validation pending. Tasks 01-01 through 01-12 are implemented and locally exercised. Task 01-13 has documentation, a hardware-report template and two explicitly synthetic fixture sets; real captures and bench measurements remain pending. See [M1-VALIDATION.md](../M1-VALIDATION.md) for local evidence and [HARDWARE-TESTING.md](../HARDWARE-TESTING.md) for the outstanding bench matrix. The milestone's real-hardware exit criteria have not been met.
+
+## 6. Done checklist
 
 - [ ] Discovery finds bench radios; nothing is enrolled without a tick.
-- [ ] SSH connects with pinning; legacy prompt works; changed key blocks collection.
-- [ ] All fourteen airOS commands run and parse; partial results are kept.
-- [ ] Dry run text equals real-run audit sequence.
-- [ ] Inventory, Credentials, Scan, Devices screens complete and snapshot-tested.
-- [ ] Two scrubbed fixture sets committed; `HARDWARE-TESTING.md` and `NETWORK-FOOTPRINT.md` written.
-- [ ] Egress workflow includes the dry run.
-- [ ] Decide: continue in Rust or switch to Go (SPEC §3.2). Record the decision as ADR 0004.
+- [x] Replay SSH verifies pinning, explicit legacy negotiation and changed-key rejection; TUI provides the per-device prompt.
+- [x] All fourteen commands are planned, replayed and parsed locally; partial results survive failures, budgets and cancellation.
+- [x] CLI replay integration verifies dry-run commands equal the real-run audit sequence.
+- [x] Inventory, Credentials, Scan and Devices screens implemented and snapshot-tested at both supported sizes.
+- [x] Two synthetic fixture sets added and hardware/traffic documents written.
+- [ ] Capture and commit two scrubbed real-device fixture sets during hardware acceptance.
+- [x] Egress workflow includes an enrolled hostname dry run in the isolated namespace and deny-all fallback.
+- [x] Continue in Rust; decision recorded in ADR 0004, with hardware compatibility pending.

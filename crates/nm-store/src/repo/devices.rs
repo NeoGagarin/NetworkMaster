@@ -21,17 +21,17 @@ impl<'a> DeviceRepo<'a> {
     }
     pub fn insert(&self, device: &Device) -> Result<()> {
         let now = Timestamp::now().to_string();
-        self.db.lock()?.execute("INSERT INTO devices (id,display_name,address,port,vendor,family,role,site_id,profile_id,source,enrolled,tags_json,created_at,updated_at) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?13)", params![
+        self.db.lock()?.execute("INSERT INTO devices (id,display_name,address,port,vendor,family,role,site_id,profile_id,source,enrolled,tags_json,created_at,updated_at,ssh_legacy_ok,interface_roles_json) VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?13,?14,?15)", params![
             device.id.to_string(), device.display_name, json(&device.management.host)?, device.management.port,
             json(&device.vendor)?, json(&device.family)?, json(&device.role)?, device.site.map(|v| v.to_string()),
-            device.credential_profile.map(|v| v.to_string()), json(&device.source)?, device.enrolled, json(&device.tags)?, now])?;
+            device.credential_profile.map(|v| v.to_string()), json(&device.source)?, device.enrolled, json(&device.tags)?, now, device.ssh_legacy_ok,json(&device.interface_roles)?])?;
         Ok(())
     }
     pub fn update(&self, device: &Device) -> Result<()> {
-        let changed = self.db.lock()?.execute("UPDATE devices SET display_name=?2,address=?3,port=?4,vendor=?5,family=?6,role=?7,site_id=?8,profile_id=?9,source=?10,enrolled=?11,tags_json=?12,updated_at=?13 WHERE id=?1", params![
+        let changed = self.db.lock()?.execute("UPDATE devices SET display_name=?2,address=?3,port=?4,vendor=?5,family=?6,role=?7,site_id=?8,profile_id=?9,source=?10,enrolled=?11,tags_json=?12,updated_at=?13,ssh_legacy_ok=?14,interface_roles_json=?15 WHERE id=?1", params![
             device.id.to_string(), device.display_name, json(&device.management.host)?, device.management.port,
             json(&device.vendor)?, json(&device.family)?, json(&device.role)?, device.site.map(|v| v.to_string()),
-            device.credential_profile.map(|v| v.to_string()), json(&device.source)?, device.enrolled, json(&device.tags)?, Timestamp::now().to_string()])?;
+            device.credential_profile.map(|v| v.to_string()), json(&device.source)?, device.enrolled, json(&device.tags)?, Timestamp::now().to_string(), device.ssh_legacy_ok,json(&device.interface_roles)?])?;
         if changed == 0 {
             return Err(StoreError::NotFound);
         }
@@ -109,6 +109,8 @@ fn read(row: &Row<'_>) -> rusqlite::Result<Device> {
             .transpose()?,
         source: from_json(row.get("source")?)?,
         enrolled: row.get("enrolled")?,
+        ssh_legacy_ok: row.get("ssh_legacy_ok")?,
+        interface_roles: from_json(row.get("interface_roles_json")?)?,
         tags: from_json(row.get("tags_json")?)?,
     })
 }

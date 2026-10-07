@@ -1,0 +1,380 @@
+use super::parse;
+use async_trait::async_trait;
+use nm_collect::{
+    allowlist::airos,
+    scrub::scrub_secrets,
+    ssh::{hostkeys::HostKeyStore, SshError, SshTransport},
+    Action, CollectCtx, CollectError, CollectionPlan, Collector, PlannedAction, SshCommand,
+    Transport,
+};
+use nm_core::{
+    ArtifactKind, Coverage, Device, DeviceFacts, DeviceFamily, DeviceResult, DeviceRole, Outcome,
+    RadioFacts, RawArtifact, SystemFacts,
+};
+use nm_store::{repo::ProfileRepo, Db};
+use sha2::{Digest, Sha256};
+use std::result::Result;
+use std::{collections::BTreeMap, sync::Arc};
+
+pub struct AirOsCollector {
+    db: Db,
+    transport: SshTransport,
+}
+impl AirOsCollector {
+    pub fn new(db: Db) -> Self {
+        Self {
+            transport: SshTransport::new(Arc::new(HostKeyStore::new(db.clone()))),
+            db,
+        }
+    }
+}
+pub fn commands(device: &Device) -> Vec<SshCommand> {
+    airos::ALL
+        .iter()
+        .copied()
+        .filter(|c| {
+            *c != airos::WSTALIST || device.role.is_none() || device.role == Some(DeviceRole::Ap)
+        })
+        .collect()
+}
+pub fn artifact_name(command: SshCommand) -> &'static str {
+    match command {
+        airos::VERSION => "version.txt",
+        airos::BOARD_INFO => "board-info.txt",
+        airos::UPTIME => "uptime.txt",
+        airos::FREE => "free.txt",
+        airos::LOADAVG => "loadavg.txt",
+        airos::MCA_STATUS => "mca-status.txt",
+        airos::MCA_DUMP => "mca-dump.json",
+        airos::WSTALIST => "wstalist.json",
+        airos::IWCONFIG => "iwconfig.txt",
+        airos::IFCONFIG => "ifconfig.txt",
+        airos::NET_DEV => "proc-net-dev.txt",
+        airos::SYSTEM_CFG => "system.cfg",
+        airos::BRCTL => "brctl.txt",
+        airos::ARP => "arp.txt",
+        _ => unreachable!("only airOS allowlist commands"),
+    }
+}
+pub fn empty_result(device: &Device) -> DeviceResult {
+    DeviceResult {
+        device_id: device.id,
+        outcome: Outcome::Ok,
+        facts: DeviceFacts::default(),
+        raw: vec![],
+        coverage: Coverage {
+            expected: commands(device).iter().map(|c| c.as_str().into()).collect(),
+            ..Coverage::default()
+        },
+    }
+}
+
+/// Parse in precedence order, independently of command execution order.
+pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFacts {
+    let map: BTreeMap<_, _> = raw
+        .iter()
+        .map(|r| (r.name.as_str(), r.bytes.as_slice()))
+        .collect();
+    let mut facts = DeviceFacts::default();
+    for command in [
+        airos::VERSION,
+        airos::BOARD_INFO,
+        airos::UPTIME,
+        airos::FREE,
+        airos::LOADAVG,
+        airos::SYSTEM_CFG,
+        airos::IWCONFIG,
+        airos::IFCONFIG,
+        airos::NET_DEV,
+        airos::ARP,
+        airos::BRCTL,
+        airos::MCA_STATUS,
+        airos::MCA_DUMP,
+        airos::WSTALIST,
+    ] {
+        let Some(bytes) = map.get(artifact_name(command)) else {
+            continue;
+        };
+        let parsed = match command {
+            airos::VERSION => parse::version::parse(bytes).map(|v| DeviceFacts {
+                system: SystemFacts {
+                    firmware: Some(v.version),
+                    platform: Some(v.platform),
+                    soc: Some(v.soc),
+                    firmware_build: Some(v.build),
+                    ..SystemFacts::default()
+                },
+                ..DeviceFacts::default()
+            }),
+            airos::BOARD_INFO => parse::board_info::parse(bytes).map(|v| DeviceFacts {
+                system: SystemFacts {
+                    model: v.name.or(v.shortname),
+                    board_id: v.sysid,
+                    ..SystemFacts::default()
+                },
+                ..DeviceFacts::default()
+            }),
+            airos::UPTIME => parse::system::uptime(bytes),
+            airos::FREE => parse::system::free(bytes),
+            airos::LOADAVG => parse::system::loadavg(bytes),
+            airos::SYSTEM_CFG => parse::system_cfg::parse(bytes),
+            airos::IWCONFIG => parse::iwconfig::parse(bytes),
+            airos::IFCONFIG => parse::ifconfig::parse(bytes).map(|interfaces| DeviceFacts {
+                interfaces,
+                ..DeviceFacts::default()
+            }),
+            airos::NET_DEV => parse::proc_net_dev::parse(bytes).map(|interfaces| DeviceFacts {
+                interfaces,
+                ..DeviceFacts::default()
+            }),
+            airos::ARP => parse::arp::parse(bytes).map(|neighbors| DeviceFacts {
+                neighbors,
+                ..DeviceFacts::default()
+            }),
+            airos::MCA_STATUS => parse::mca_status::parse(bytes).map(|s| s.facts),
+            airos::MCA_DUMP => parse::mca_dump::parse(bytes),
+            airos::WSTALIST => parse::wstalist::parse(bytes).map(|stations| DeviceFacts {
+                radio: Some(RadioFacts {
+                    stations,
+                    ..RadioFacts::default()
+                }),
+                ..DeviceFacts::default()
+            }),
+            airos::BRCTL => parse::text(bytes).map(|_| DeviceFacts::default()),
+            _ => unreachable!(),
+        };
+        match parsed {
+            Ok(mut parsed) => {
+                // Merge interfaces by name, preserving fallback counters/MACs.
+                for incoming in parsed.interfaces.drain(..) {
+                    if let Some(existing) = facts
+                        .interfaces
+                        .iter_mut()
+                        .find(|i| i.name == incoming.name)
+                    {
+                        let mut old = DeviceFacts {
+                            interfaces: vec![existing.clone()],
+                            ..DeviceFacts::default()
+                        };
+                        // Struct merge for one interface preserves optional observations.
+                        let mut value = serde_json::to_value(&old.interfaces[0]).unwrap();
+                        let extra = serde_json::to_value(&incoming).unwrap();
+                        merge_interface(&mut value, &extra);
+                        old.interfaces[0] = serde_json::from_value(value).unwrap();
+                        *existing = old.interfaces.remove(0);
+                    } else {
+                        facts.interfaces.push(incoming);
+                    }
+                    coverage
+                        .sources
+                        .insert("interfaces".into(), command.as_str().into());
+                }
+                let value = serde_json::to_value(&parsed).unwrap();
+                for (section, v) in value.as_object().unwrap() {
+                    if !v.is_null()
+                        && v != &serde_json::to_value(DeviceFacts::default()).unwrap()[section]
+                    {
+                        coverage.sources.insert(
+                            if section == "radio" && command == airos::WSTALIST {
+                                "radio.stations".into()
+                            } else {
+                                section.clone()
+                            },
+                            command.as_str().into(),
+                        );
+                    }
+                }
+                parse::merge(&mut facts, &parsed);
+            }
+            Err(e) => {
+                coverage.collected.retain(|c| c != command.as_str());
+                if !coverage.missing.iter().any(|c| c == command.as_str()) {
+                    coverage.missing.push(command.as_str().into());
+                }
+                coverage
+                    .errors
+                    .insert(command.as_str().into(), e.to_string());
+            }
+        }
+    }
+    crate::edgeos::parse::infer_wan(&mut facts);
+    facts
+}
+pub(crate) fn merge_interface(t: &mut serde_json::Value, i: &serde_json::Value) {
+    if let (Some(t), Some(i)) = (t.as_object_mut(), i.as_object()) {
+        for (k, v) in i {
+            if v.is_null() || v.as_array().is_some_and(Vec::is_empty) {
+                continue;
+            }
+            if v.is_object() {
+                let target = t.entry(k).or_insert(serde_json::json!({}));
+                if !target.is_object() {
+                    *target = serde_json::json!({});
+                }
+                merge_interface(target, v);
+            } else {
+                t.insert(k.clone(), v.clone());
+            }
+        }
+    }
+}
+
+#[async_trait]
+impl Collector for AirOsCollector {
+    fn family(&self) -> DeviceFamily {
+        DeviceFamily::AirOs
+    }
+    fn plan(&self, device: &Device) -> CollectionPlan {
+        CollectionPlan(
+            commands(device)
+                .into_iter()
+                .map(|c| PlannedAction {
+                    transport: Transport::Ssh,
+                    target: device.management.clone(),
+                    action: Action::SshCommand(c),
+                })
+                .collect(),
+        )
+    }
+    async fn collect(
+        &self,
+        ctx: &CollectCtx,
+        device: &Device,
+    ) -> Result<DeviceResult, CollectError> {
+        let mut result = empty_result(device);
+        ctx.progress(device.id, "connecting".into()).await;
+        let profile = device
+            .credential_profile
+            .and_then(|id| ProfileRepo::new(&self.db).get(id).ok().flatten());
+        let Some(profile) = profile else {
+            result.outcome = Outcome::AuthFailed;
+            result
+                .coverage
+                .missing
+                .clone_from(&result.coverage.expected);
+            result
+                .coverage
+                .errors
+                .insert("ssh".into(), "no credential profile".into());
+            return Ok(result);
+        };
+        let mut session = match self.transport.connect(ctx, device, &profile).await {
+            Ok(s) => s,
+            Err(error) => {
+                ctx.audit
+                    .append(nm_core::AuditEvent {
+                        ts: nm_core::Timestamp::now(),
+                        actor: nm_core::Actor::Collector,
+                        action: nm_core::AuditAction::SshConnect,
+                        target: device.id.to_string(),
+                        detail: serde_json::json!({"error":error.to_string(),"accepted":false}),
+                        bytes_in: 0,
+                        bytes_out: 0,
+                    })
+                    .await
+                    .map_err(|e| CollectError::Unreachable(e.to_string()))?;
+                result.outcome = match error {
+                    SshError::AuthFailed => Outcome::AuthFailed,
+                    SshError::Cancelled => Outcome::Cancelled,
+                    _ => Outcome::Unreachable,
+                };
+                if matches!(error, SshError::HostKeyChanged { .. }) {
+                    result.facts.system.ssh_host_key_changed = Some(true);
+                }
+                if matches!(error, SshError::LegacyAlgorithmsRequired(_)) {
+                    ctx.progress(device.id, format!("legacy required: {error}"))
+                        .await;
+                }
+                result
+                    .coverage
+                    .missing
+                    .clone_from(&result.coverage.expected);
+                result
+                    .coverage
+                    .errors
+                    .insert("ssh".into(), error.to_string());
+                return Ok(result);
+            }
+        };
+        for command in commands(device) {
+            if ctx.cancel.is_cancelled() {
+                result.outcome = Outcome::Cancelled;
+                break;
+            }
+            ctx.progress(device.id, format!("running {}", command.as_str()))
+                .await;
+            match session.run(command).await {
+                Ok(output) => {
+                    let (bytes, removed) =
+                        scrub_secrets(DeviceFamily::AirOs, artifact_name(command), &output.stdout);
+                    result.raw.push(RawArtifact {
+                        kind: if matches!(command, airos::MCA_DUMP | airos::WSTALIST) {
+                            ArtifactKind::Json
+                        } else if command == airos::SYSTEM_CFG {
+                            ArtifactKind::Config
+                        } else {
+                            ArtifactKind::Text
+                        },
+                        name: artifact_name(command).into(),
+                        sha256: Sha256::digest(&bytes).into(),
+                        bytes,
+                        redacted: true,
+                    });
+                    if output.exit == Some(0) && !output.truncated {
+                        result.coverage.collected.push(command.as_str().into());
+                    } else {
+                        result.coverage.errors.insert(
+                            command.as_str().into(),
+                            format!("exit {:?}; truncated {}", output.exit, output.truncated),
+                        );
+                        result.coverage.missing.push(command.as_str().into());
+                    }
+                    // Parse original config only transiently for default-community detection.
+                    if command == airos::SYSTEM_CFG {
+                        if let Ok(config) = parse::system_cfg::parse(&output.stdout) {
+                            result.facts.services.snmp = config.services.snmp;
+                            result.facts.config = config.config;
+                        }
+                    }
+                    let _ = removed;
+                }
+                Err(error) => {
+                    result.coverage.missing.push(command.as_str().into());
+                    result
+                        .coverage
+                        .errors
+                        .insert(command.as_str().into(), error.to_string());
+                    if matches!(error, SshError::Cancelled) {
+                        result.outcome = Outcome::Cancelled;
+                    }
+                    // A timed out channel may still be executing remotely. End
+                    // this session rather than overlap it with another command.
+                    break;
+                }
+            }
+            let snmp = result.facts.services.snmp.clone();
+            let config = result.facts.config.clone();
+            result.facts = parse_artifacts(&result.raw, &mut result.coverage);
+            if snmp.community_is_default.is_some() {
+                result.facts.services.snmp.community_is_default = snmp.community_is_default;
+            }
+            if let Some(config) = config {
+                result.facts.config = Some(config);
+            }
+            result.facts.system.ssh_legacy_algorithms = Some(session.legacy);
+            ctx.save_partial(&result);
+        }
+        for expected in &result.coverage.expected {
+            if !result.coverage.collected.contains(expected)
+                && !result.coverage.missing.contains(expected)
+            {
+                result.coverage.missing.push(expected.clone());
+            }
+        }
+        if result.outcome != Outcome::Cancelled && !result.coverage.missing.is_empty() {
+            result.outcome = Outcome::Partial(result.coverage.missing.clone());
+        }
+        let _ = session.close().await;
+        Ok(result)
+    }
+}

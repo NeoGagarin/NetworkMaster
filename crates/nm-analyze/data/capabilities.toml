@@ -1,0 +1,17 @@
+[edgeos]
+routing = ["static", "ospf", "ospfv3", "bgp", "rip", "ripng"]
+not_supported = ["eigrp", "isis"]
+services = ["ssh", "https", "http", "snmp", "dhcp", "ntp"]
+hardware_offload = true
+offload_models = ["ER-X", "ER-X-SFP", "ER-4", "ER-6P", "ER-8", "ER-12", "ER-Lite", "ER-PoE"]
+channel_widths = []
+management = ["ssh", "https", "http"]
+
+[airos]
+routing = ["static"]
+not_supported = ["ospf", "bgp", "eigrp", "isis"]
+services = ["ssh", "https", "http", "snmp", "ntp"]
+hardware_offload = false
+offload_models = []
+channel_widths = [5, 10, 20, 40, 80]
+management = ["ssh", "https", "http"]

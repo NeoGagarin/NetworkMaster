@@ -37,6 +37,33 @@ pub enum Confidence {
     Likely,
     Heuristic,
 }
+impl FromStr for Severity {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_str() {
+            "info" => Ok(Self::Info),
+            "low" => Ok(Self::Low),
+            "medium" => Ok(Self::Medium),
+            "high" => Ok(Self::High),
+            "critical" => Ok(Self::Critical),
+            _ => Err(format!("unknown severity: {s}")),
+        }
+    }
+}
+impl FromStr for Category {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_str() {
+            "security" => Ok(Self::Security),
+            "performance" => Ok(Self::Performance),
+            "reliability" => Ok(Self::Reliability),
+            "capacity" => Ok(Self::Capacity),
+            "hygiene" => Ok(Self::Hygiene),
+            "rf" | "rf-health" | "rfhealth" => Ok(Self::RfHealth),
+            _ => Err(format!("unknown category: {s}")),
+        }
+    }
+}
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Evidence {
     pub device_id: DeviceId,

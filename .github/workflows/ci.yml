@@ -68,6 +68,13 @@ jobs:
       - run: cargo test --locked --workspace
         env:
           INSTA_UPDATE: 'no'
+      - name: Rule catalog documentation drift
+        shell: bash
+        run: |
+          cargo run --locked -p nm-cli -- --data-dir "$RUNNER_TEMP/nm-rules" rules export-md > "$RUNNER_TEMP/RULES.md"
+          diff -u docs/RULES.md "$RUNNER_TEMP/RULES.md"
+        env:
+          NETMASTER_NET: deny
       - run: cargo deny check
       - name: Direct connection boundary
         shell: bash

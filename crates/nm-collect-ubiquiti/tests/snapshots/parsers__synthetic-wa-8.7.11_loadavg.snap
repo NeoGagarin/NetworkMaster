@@ -1,0 +1,97 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::system::loadavg(&read(\"loadavg.txt\")).unwrap()"
+---
+{
+  "system": {
+    "hostname": null,
+    "model": null,
+    "firmware": null,
+    "uptime_seconds": null,
+    "loadavg": {
+      "one_min": 0.1,
+      "five_min": 0.2,
+      "fifteen_min": 0.3
+    },
+    "cpu_count": null,
+    "memory": null,
+    "serial": null,
+    "ntp_servers": [],
+    "offload": null,
+    "ssh_host_key_changed": null,
+    "ssh_legacy_algorithms": null,
+    "cpu_load_pct": null,
+    "genuine": null,
+    "platform": null,
+    "soc": null,
+    "firmware_build": null,
+    "board_id": null,
+    "netrole": null
+  },
+  "interfaces": [],
+  "addresses": [],
+  "radio": null,
+  "routing": null,
+  "services": {
+    "http": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "https": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ssh": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "telnet": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "snmp": {
+      "enabled": null,
+      "port": null,
+      "community_present": null,
+      "community_is_default": null
+    },
+    "upnp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "discovery": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ntp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_client": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_server": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "pppoe": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    }
+  },
+  "dhcp": null,
+  "firewall": null,
+  "config": null,
+  "neighbors": []
+}

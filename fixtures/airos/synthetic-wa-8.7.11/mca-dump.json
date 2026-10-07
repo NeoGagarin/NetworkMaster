@@ -1,0 +1,70 @@
+{
+  "host": {
+    "hostname": "fixture-host-1",
+    "uptime": 183840,
+    "fwversion": "8.7.11",
+    "devmodel": "Rocket Prism 5AC",
+    "netrole": "bridge",
+    "loadavg": [
+      0.1,
+      0.2,
+      0.3
+    ],
+    "totalram": 67108864,
+    "freeram": 46628864,
+    "cpuload": 5
+  },
+  "wireless": {
+    "mode": "ap",
+    "essid": "fixture-ssid-1",
+    "frequency": 5805,
+    "chwidth": 40,
+    "txpower": 18,
+    "signal": -60,
+    "noisef": -95,
+    "ccq": 92,
+    "txrate": 120,
+    "rxrate": 110,
+    "chainrssi": [
+      -60,
+      -62
+    ],
+    "distance": 1300,
+    "polling": {
+      "enabled": true,
+      "quality": 90,
+      "capacity": 85,
+      "priority": 2
+    }
+  },
+  "interfaces": [
+    {
+      "ifname": "eth0",
+      "hwaddr": "02:00:00:00:00:01",
+      "enabled": true,
+      "status": {
+        "plugged": true,
+        "speed": 1000,
+        "duplex": "full",
+        "rx_bytes": 1000,
+        "tx_bytes": 2000,
+        "rx_errors": 0,
+        "tx_errors": 1,
+        "rx_dropped": 0,
+        "tx_dropped": 0
+      }
+    }
+  ],
+  "services": {
+    "dhcpc": true,
+    "dhcpd": false,
+    "pppoe": false
+  },
+  "firewall": {
+    "enabled": false
+  },
+  "genuine": true,
+  "future": {
+    "ignored": true
+  }
+}

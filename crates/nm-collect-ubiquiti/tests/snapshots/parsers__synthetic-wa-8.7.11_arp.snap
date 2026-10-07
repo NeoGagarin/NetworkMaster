@@ -1,0 +1,13 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::arp::parse(&read(\"arp.txt\")).unwrap()"
+---
+[
+  {
+    "protocol": "arp",
+    "mac": "02:00:00:00:00:02",
+    "address": "192.0.2.2",
+    "hostname": null,
+    "interface": "eth0"
+  }
+]

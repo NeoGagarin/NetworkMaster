@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Scan  |  pre-alpha 0.0.1                                    |
++------------------------------------------------------------------------------+
++Scan | o scope | g concurrency | r dry run | s start | c cancel---------------+
+|Scope: all enrolled | global 8 / per site 2                                   |
+|Legacy SSH requires explicit per-device opt-in.                               |
++------------------------------------------------------------------------------+
++Dry run | Enter expand/collapse | Up/Down scroll------------------------------+
+|14 SSH commands x 1 devices, 0 HTTP, 0 UDP                                    |
+|Tower AP 192.0.2.1                                                            |
+|  192.0.2.1 Ssh mca-status                                                    |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+r Dry run  s Start  c Cancel  o Scope  g Limits  Enter Details  q Quit

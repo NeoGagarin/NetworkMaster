@@ -1,0 +1,2 @@
+IP address Hardware Address Lease expiration Pool Client Name
+192.0.2.10 02:00:00:00:00:10 2026/10/06 12:00:00 LAN

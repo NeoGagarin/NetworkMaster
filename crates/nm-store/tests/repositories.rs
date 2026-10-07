@@ -14,6 +14,8 @@ fn device() -> Device {
         credential_profile: None,
         source: EnrollmentSource::Manual,
         enrolled: false,
+        ssh_legacy_ok: false,
+        interface_roles: std::collections::BTreeMap::default(),
         tags: vec!["tower".into()],
     }
 }
@@ -36,6 +38,7 @@ fn inventory_and_metadata_crud_with_foreign_keys() {
         id: SiteId::new(),
         name: "Tower A".into(),
         notes: "hill".into(),
+        max_distance_m: None,
     };
     sites.insert(&site).unwrap();
     assert_eq!(sites.get(site.id).unwrap(), Some(site.clone()));
@@ -51,6 +54,7 @@ fn inventory_and_metadata_crud_with_foreign_keys() {
         },
         storage: StorageMode::SessionOnly,
         scope_hint: "Tower A".into(),
+        is_vendor_default: false,
     };
     profiles.insert(&profile).unwrap();
     assert_eq!(profiles.get(profile.id).unwrap(), Some(profile.clone()));
@@ -193,6 +197,7 @@ fn snapshots_preserve_facts_coverage_findings_and_redacted_artifacts() {
             expected: vec!["version".into(), "radio".into()],
             collected: vec!["version".into()],
             missing: vec!["radio".into()],
+            ..Coverage::default()
         },
     };
     result.facts.system.firmware = Some("1".into());

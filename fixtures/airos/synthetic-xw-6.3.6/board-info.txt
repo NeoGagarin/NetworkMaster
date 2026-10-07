@@ -1,0 +1,5 @@
+board.sysid=0xe005
+board.name=NanoStation M5
+board.shortname=XW
+board.hwaddr=02:00:00:00:00:01
+board.subtype=0

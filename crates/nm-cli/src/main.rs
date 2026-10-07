@@ -20,6 +20,7 @@ fn main() -> ExitCode {
         .with_ansi(!cli.no_color && std::env::var_os("NO_COLOR").is_none())
         .init();
     let runtime = match tokio::runtime::Builder::new_multi_thread()
+        .thread_stack_size(8 * 1024 * 1024)
         .enable_all()
         .build()
     {
@@ -29,7 +30,11 @@ fn main() -> ExitCode {
             return ExitCode::from(1);
         }
     };
-    let code = match runtime.block_on(run(cli)) {
+    // Poll SSH handshakes on runtime workers. Windows' main thread has only a
+    // 1 MiB stack, which is insufficient for debug-build cryptographic futures.
+    let code = match runtime
+        .block_on(async { tokio::spawn(run(cli)).await.map_err(anyhow::Error::from)? })
+    {
         Ok(code) => code,
         Err(error) => {
             eprintln!("error: {error:#}");
@@ -56,9 +61,13 @@ async fn run(cli: Cli) -> anyhow::Result<u8> {
             nm_tui::RunOutcome::Interrupted => 130,
         });
     }
-    let result = tokio::select! {
-        result = commands::execute(&cli,&svc) => result,
-        result = tokio::signal::ctrl_c() => { result?; Ok(130) },
+    let result = if matches!(cli.command, Some(cli::Command::Scan { .. })) {
+        commands::execute(&cli, &svc).await
+    } else {
+        tokio::select! {
+            result = commands::execute(&cli,&svc) => result,
+            result = tokio::signal::ctrl_c() => { result?; Ok(130) },
+        }
     };
     let shutdown = svc.shutdown().await;
     let code = result?;

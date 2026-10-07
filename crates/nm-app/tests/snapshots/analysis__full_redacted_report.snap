@@ -1,0 +1,96 @@
+---
+source: crates/nm-app/tests/analysis.rs
+expression: report
+---
+# NetworkMaster assessment
+
+Snapshot: `snapshot-1`  
+Started: 2026-10-06T04:00:00Z  
+Finished: 2026-10-06T04:00:00Z  
+Devices: 1
+
+## Snapshot coverage
+
+| Family | Devices |
+| --- | --- |
+| EdgeOs | 1 |
+
+Artifacts: 0 collected, 1 missing, 0 skipped by configuration.
+
+## High findings
+
+### UBNT-PERF-001 — Hardware offload disabled
+
+Category: Performance · Confidence: Certain
+
+Affected devices: device-1
+
+IPv4 forwarding offload is disabled on a model with hardware offload. Forwarding may consume more CPU and reduce routing throughput. Check feature compatibility before enabling offload in a maintenance window. Verify offload status and CPU use under representative traffic.
+
+| Device | Metric | Observed | Threshold |
+| --- | --- | --- | --- |
+| device-1 | system.offload.ipv4_forwarding | {"address":"address-1","host":"host-1","mac":"address-2","serial":"serial-1","unsafe":"a&#124;&lt;script&gt;\nnext"} | — |
+
+### UBNT-SEC-002 — Public management address
+
+Category: Security · Confidence: Certain
+
+Affected devices: device-1
+
+The enrolled management address is public. Internet exposure increases the chance of unauthorized access if upstream filtering allows it. Put management on a private network or restrict access to trusted source addresses. Verify the upstream access policy and management reachability from outside the network.
+
+| Device | Metric | Observed | Threshold |
+| --- | --- | --- | --- |
+| device-1 | management.address | "address-1" | — |
+
+### UBNT-SEC-011 — WAN firewall missing
+
+Category: Security · Confidence: Heuristic
+
+Affected devices: device-1
+
+An EdgeRouter WAN interface has neither an inbound nor a local firewall attached. Forwarded traffic and traffic to the router may lack the intended protection. Confirm the WAN role and attach suitable rules for both traffic paths. Test management access and permitted traffic before closing the maintenance window.
+
+| Device | Metric | Observed | Threshold |
+| --- | --- | --- | --- |
+| device-1 | interfaces.eth0.firewall | {"in":null,"local":null,"role":"Wan"} | — |
+
+## Info findings
+
+### GEN-HYG-003 — No NTP configured
+
+Category: Hygiene · Confidence: Certain
+
+Affected devices: device-1
+
+The collected configuration lists no NTP servers. Unsynchronized clocks make logs and event correlation less reliable. Configure reachable time servers appropriate for the network. Check clock synchronization and the next configuration scan.
+
+| Device | Metric | Observed | Threshold |
+| --- | --- | --- | --- |
+| device-1 | system.ntp_servers | [] | — |
+
+### GEN-HYG-005 — Incomplete collection
+
+Category: Hygiene · Confidence: Certain
+
+Affected devices: device-1
+
+Collection is incomplete for this device. Rules depending on missing observations cannot evaluate those conditions reliably. Review the listed artifacts and errors, then check reachability, permissions or firmware support. Scan again and confirm coverage improves.
+
+| Device | Metric | Observed | Threshold |
+| --- | --- | --- | --- |
+| device-1 | coverage.missing | {"errors":{},"missing":["show interfaces"],"outcome":{"Partial":["show interfaces"]}} | — |
+
+## Device summary by site
+
+### site-1
+
+| Device | Model | Firmware | Outcome |
+| --- | --- | --- | --- |
+| device-1 | ER-X | Unknown | Partial(["show interfaces"]) |
+
+## Appendix: coverage gaps
+
+### device-1
+
+- Missing: show interfaces

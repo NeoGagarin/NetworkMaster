@@ -25,6 +25,7 @@ pub enum Outcome {
     Unreachable,
     Partial(Vec<String>),
     ParseError,
+    Cancelled,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RawArtifact {
@@ -45,5 +46,9 @@ pub enum ArtifactKind {
 pub struct Coverage {
     pub expected: Vec<String>,
     pub collected: Vec<String>,
+    /// Operational commands omitted because a configured protocol is absent.
+    pub skipped: std::collections::BTreeMap<String, String>,
     pub missing: Vec<String>,
+    pub sources: std::collections::BTreeMap<String, String>,
+    pub errors: std::collections::BTreeMap<String, String>,
 }

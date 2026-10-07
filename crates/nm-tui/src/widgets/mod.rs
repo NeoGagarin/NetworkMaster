@@ -60,7 +60,15 @@ pub struct KeyHints;
 impl KeyHints {
     pub fn render(app: &App, frame: &mut Frame<'_>, area: Rect) {
         frame.render_widget(
-            Paragraph::new("1 Dashboard  0 Settings  ? Help  q Quit  Ctrl+C Cancel")
+            Paragraph::new(match app.screen {
+                crate::ScreenId::Inventory=>"n Add  i CSV  d Discover  Space Select  e Enroll  u Unenroll  p Profile  t Site",
+                crate::ScreenId::Credentials=>"n New  f Forget  Enter Devices  2 Inventory  4 Scan  q Quit",
+                crate::ScreenId::Scan=>"r Dry run  s Start  c Cancel  o Scope  g Limits  Enter Details  q Quit",
+                crate::ScreenId::Findings=>"/ Filter  1-5 Severity  c Category  h Heuristics  D Disable  E Export  Enter Device",
+                crate::ScreenId::Topology=>"Up/Down Select  Enter Device  5 Findings  Esc Dashboard",
+                crate::ScreenId::Devices=>"Tab Detail  Up/Down Device  [ ] Snapshot  / Search  R Interface role  q Quit",
+                _=>"1 Home  2 Inventory  3 Credentials  4 Scan  5 Findings  6 Devices  7 Topology  ? Help",
+            })
                 .style(Style::default().fg(app.theme.accent)),
             area,
         );

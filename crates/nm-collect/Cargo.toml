@@ -16,5 +16,10 @@ tokio-util.workspace = true
 async-trait.workspace = true
 thiserror.workspace = true
 if-addrs.workspace = true
-[dev-dependencies]
+russh.workspace = true
+secrecy.workspace = true
 regex.workspace = true
+serde_json.workspace = true
+[dev-dependencies]
+tempfile.workspace = true
+rand.workspace = true

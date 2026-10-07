@@ -12,4 +12,14 @@ pub enum Effect {
     Quit,
     Interrupted,
     SaveSettings,
+    StartScan {
+        devices: Vec<nm_core::Device>,
+        dry_run: bool,
+    },
+    Discover(nm_collect::net::LocalIface),
+    AddCredential {
+        profile: nm_core::CredentialProfile,
+        secret: nm_app::SecretMaterial,
+    },
+    ForgetCredential(nm_core::CredentialProfileId),
 }

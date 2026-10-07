@@ -1,0 +1,6 @@
+model = "Rocket Prism 5AC"
+firmware = "8.7.11"
+role = "Ap"
+capture_date = "2026-10-06"
+synthetic = true
+partial = []

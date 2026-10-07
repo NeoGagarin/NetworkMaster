@@ -9,6 +9,9 @@ pub struct CredentialProfile {
     pub kind: CredentialKind,
     pub storage: StorageMode,
     pub scope_hint: String,
+    /// Derived when a credential is entered; contains no secret.
+    #[serde(default)]
+    pub is_vendor_default: bool,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum CredentialKind {

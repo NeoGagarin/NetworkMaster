@@ -1,1 +1,1 @@
-Read-only collection contracts, empty compile-time command allowlists, enrolled-target gating and injectable socket creation. M0 contains no device transport or vendor collector.
+Read-only collection contracts, fourteen airOS allowlist commands, enrolled socket endpoint gating, injectable sockets, pinned russh SSH transport, bounded command execution, secret scrubbing and fixture identifier tokenization. All real transport sockets go through `NetFactory`.

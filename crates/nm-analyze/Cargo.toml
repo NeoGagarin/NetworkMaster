@@ -8,9 +8,9 @@ repository.workspace = true
 [lints]
 workspace = true
 [dependencies]
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+sha2.workspace = true
+ulid.workspace = true
 nm-core.workspace = true
-
-[package.metadata.cargo-machete]
-# Stub crate: the dependency fixes its place in the layering before code lands. Remove this
-# entry once the crate uses nm-core.
-ignored = ["nm-core"]

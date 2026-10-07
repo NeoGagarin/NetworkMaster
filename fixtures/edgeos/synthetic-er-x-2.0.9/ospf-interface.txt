@@ -1,0 +1,7 @@
+eth1 is up, line protocol is up
+ Internet Address 192.0.2.1/24, Area 0.0.0.0
+ Router ID 192.0.2.1, Network Type BROADCAST, Cost: 10
+ State BDR, Priority 1
+ Designated Router (ID) 192.0.2.2
+ Backup Designated Router (ID) 192.0.2.1
+ Timer intervals configured, Hello 10, Dead 40

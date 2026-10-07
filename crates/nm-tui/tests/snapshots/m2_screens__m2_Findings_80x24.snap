@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/m2_screens.rs
+expression: "term.backend().buffer().content.chunks(usize::from(width)).map(|row|\nrow.iter().map(ratatui::buffer::Cell::symbol).collect::<String>().trim_end().to_owned()).collect::<Vec<_>>().join(\"\\n\")"
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Findings  |  pre-alpha 0.0.1                                |
++------------------------------------------------------------------------------+
++Findings 2 | /  | min None | None | heuristics shown--------------------------+
+|Severity   Rule          Title                     #   Category     Confidence|
+|! Medium   UBNT-RF-001   Radio chain imbalance     1   RfHealth     Certain   |
+|! Medium   UBNT-RF-004   Weak station signal       1   RfHealth     Certain   |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+
++Explanation | Enter device | Left/Right affected | PgUp/PgDn------------------+
+|The radio chains differ more than the configured limit. This can indicate     |
+|alignment, polarization, cabling, or antenna problems. Inspect the            |
+|installation and align the link while watching each chain. Confirm the chain  |
+|values converge and repeat the measurement.                                   |
+|                                                                              |
+|Evidence: device | metric | observed | threshold                              |
+|North AP | radio.stations.02:00:00:00:00:02.chains |                          |
+|[{"chain":null,"rssi_dbm":-55},{"chain":null,"rssi_dbm":-65}] | 6.0           |
++------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+/ Filter  1-5 Severity  c Category  h Heuristics  D Disable  E Export  Enter Dev

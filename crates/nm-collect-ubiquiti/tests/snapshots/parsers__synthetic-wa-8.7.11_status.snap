@@ -1,0 +1,174 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::mca_status::parse(&read(\"mca-status.txt\")).unwrap()"
+---
+{
+  "facts": {
+    "system": {
+      "hostname": "fixture-host-1",
+      "model": null,
+      "firmware": "WA.ar934x.v8.7.11",
+      "uptime_seconds": 183840,
+      "loadavg": {
+        "one_min": 0.1,
+        "five_min": 0.2,
+        "fifteen_min": 0.3
+      },
+      "cpu_count": null,
+      "memory": {
+        "total_bytes": 67108864,
+        "available_bytes": null,
+        "free_bytes": 46628864
+      },
+      "serial": null,
+      "ntp_servers": [],
+      "offload": null,
+      "ssh_host_key_changed": null,
+      "ssh_legacy_algorithms": null,
+      "cpu_load_pct": null,
+      "genuine": null,
+      "platform": null,
+      "soc": null,
+      "firmware_build": null,
+      "board_id": null,
+      "netrole": null
+    },
+    "interfaces": [
+      {
+        "name": "eth0",
+        "mac": null,
+        "description": null,
+        "admin_up": null,
+        "oper_up": true,
+        "speed_mbps": 1000,
+        "duplex": null,
+        "counters": null,
+        "addresses": [],
+        "role": null,
+        "role_confidence": null,
+        "firewall_in": null,
+        "firewall_out": null,
+        "firewall_local": null
+      }
+    ],
+    "addresses": [],
+    "radio": {
+      "mode": "Ap",
+      "ssid": "fixture-ssid-1",
+      "frequency_mhz": 5805,
+      "channel_width_mhz": 20,
+      "tx_power_dbm": null,
+      "noise_floor_dbm": -96,
+      "chains": [
+        {
+          "chain": 0,
+          "rssi_dbm": -61
+        },
+        {
+          "chain": 1,
+          "rssi_dbm": -63
+        }
+      ],
+      "ccq_pct": 91,
+      "airtime_pct": null,
+      "tx_rate_mbps": 100.0,
+      "rx_rate_mbps": 90.0,
+      "stations": [],
+      "airmax": null,
+      "distance_m": null,
+      "mcs": null,
+      "signal_dbm": -61,
+      "polling_enabled": null,
+      "mac": null,
+      "throughput_mbps": null,
+      "security": null,
+      "ssid_hidden": null,
+      "country_code": null,
+      "country_obey": null
+    },
+    "routing": null,
+    "services": {
+      "http": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "https": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "ssh": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "telnet": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "snmp": {
+        "enabled": null,
+        "port": null,
+        "community_present": null,
+        "community_is_default": null
+      },
+      "upnp": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "discovery": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "ntp": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "dhcp_client": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "dhcp_server": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "pppoe": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      }
+    },
+    "dhcp": null,
+    "firewall": null,
+    "config": null,
+    "neighbors": []
+  },
+  "values": {
+    "ccq": "91",
+    "chainrssi": "-61:-63",
+    "chanbw": "20",
+    "deviceName": "fixture-host-1",
+    "firmwareVersion": "WA.ar934x.v8.7.11",
+    "freq": "5805",
+    "lanPlugged": "1",
+    "lanSpeed": "1000",
+    "loadavg": "0.10 0.20 0.30",
+    "memFree": "45536",
+    "memTotal": "65536",
+    "noise": "-96",
+    "rxrate": "90",
+    "signal": "-61",
+    "ssid": "fixture-ssid-1",
+    "txrate": "100",
+    "unknown.future": "keep-me",
+    "uptime": "183840",
+    "wlanOpmode": "ap"
+  }
+}

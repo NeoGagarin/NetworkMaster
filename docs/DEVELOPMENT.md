@@ -9,7 +9,7 @@ cargo build --locked --workspace
 cargo run -p nm-cli --
 ```
 
-The binary is `target\debug\netmaster.exe`. On Linux install rustup, a C compiler, make and a linker (`build-essential` on Debian/Ubuntu), then run the same Cargo commands. The binary is `target/debug/netmaster`. An interactive terminal is required for the TUI. SQLite is bundled; M0 needs no other C library. Later HTTP/SSH transports use Rust implementations and rustls.
+The binary is `target\debug\netmaster.exe`. On Linux install rustup, a C compiler, make and a linker (`build-essential` on Debian/Ubuntu), then run the same Cargo commands. The binary is `target/debug/netmaster`. An interactive terminal is required for the TUI. SQLite is bundled. SSH uses russh with the ring backend; no system SSH executable is required.
 
 Press `q` to exit, `0` for Settings and `?` for Help. Try `--ascii` in legacy consoles and `--no-color` to disable color. `NO_COLOR` is honored. On Windows, `chcp` is queried without changing the console code page; Unicode borders are used for code page 65001. Minimum size is 80×24, with larger layouts tested at 120×40. Resizes redraw on the next event.
 
@@ -21,10 +21,11 @@ The database is `%LOCALAPPDATA%\NetworkMaster\netmaster.db` on Windows or `$XDG_
 cargo run -p nm-cli -- --data-dir ./target/smoke inventory add 192.0.2.10 --family airos --name test
 cargo run -p nm-cli -- --data-dir ./target/smoke inventory list --json
 cargo run -p nm-cli -- --data-dir ./target/smoke inventory enroll <id-from-add>
+cargo run -p nm-cli -- --data-dir ./target/smoke scan --dry-run
 cargo run -p nm-cli -- --data-dir ./target/smoke audit tail
 ```
 
-Adding does not enroll or resolve DNS. M0 opens no network connection. See [CLI.md](CLI.md) for credentials, stable exit codes and the complete future command tree.
+Adding does not enroll or resolve DNS. Dry runs also skip DNS and sockets. Real scans and explicitly requested discovery create network traffic; see [CLI.md](CLI.md) and [NETWORK-FOOTPRINT.md](NETWORK-FOOTPRINT.md).
 
 ## Validation
 
@@ -106,12 +107,12 @@ Golden terminal output is in `crates/nm-tui/tests/snapshots`. Update only after 
                               +------------+
 ```
 
-The diagram represents the product layers; in M0 vendor/analysis/AI/MCP crates are stubs. Vendor collectors implement nm-collect contracts, so their Rust dependency points toward nm-collect. See ADR 0003 for metadata and audit placement.
+The diagram represents the product layers; in M1 analysis/AI/MCP crates remain stubs. nm-app registers the Ubiquiti collector. Vendor collectors implement nm-collect contracts, so their Rust dependency points toward nm-collect. See ADR 0003 for metadata and audit placement.
 
 ## Invariants and extension points
 
-- No writes: private `SshCommand` construction in one allowlist module, a forbidden-verb integration test and closed HTTP login endpoint enum. No transport exists yet.
-- Enrollment: candidates default to false; `TargetGate` resolves enrolled inventory once, and RealNet checks the IP before creating an outbound TCP connection.
+- No writes: private `SshCommand` construction in one allowlist module, a forbidden-verb integration test and closed HTTP login endpoint enum. The SSH runner accepts only allowlisted commands and runs sequential channels.
+- Enrollment: candidates default to false; `TargetGate` resolves enrolled inventory once, and RealNet checks the resolved IP and port before creating an outbound TCP connection.
 - Secrets: secrecy allocations zeroize on drop. The arena has closure access and no owned-secret getter or Serialize implementation. Metadata can persist, secret-derived scrub patterns cannot be logged.
 - AI isolation: cargo-deny restricts direct creds dependents, and the Python graph check rejects indirect paths too.
 - Audit: collectors queue bounded events to a single writer; flush reports errors and acts as a durability barrier. SQLite triggers prohibit audit updates/deletes through the application connection.
@@ -121,4 +122,10 @@ Copy the ADR template for architectural changes. Add dependency versions to `[wo
 
 ## Interactive acceptance
 
-The automated TUI snapshots cover three screens at both sizes. The human matrix is separate: cmd, PowerShell 5, PowerShell 7, Windows Terminal and Linux xterm. For each, launch, navigate, switch themes, resize, quit and confirm the cursor/normal terminal return. Test Ctrl+C with an active job once scan jobs exist. Record available host results in [M0-VALIDATION.md](M0-VALIDATION.md); automated snapshots do not establish compatibility with every terminal host.
+The automated TUI snapshots cover seven screens and all six Devices tabs at both sizes. The human matrix is separate: cmd, PowerShell 5, PowerShell 7, Windows Terminal and Linux xterm. For each, launch, navigate, switch themes, resize, quit and confirm the cursor/normal terminal return. Test Ctrl+C with an active scan and confirm the partial snapshot remains usable. Record available host results in [M1-VALIDATION.md](M1-VALIDATION.md); automated snapshots do not establish compatibility with every terminal host.
+
+## M1 replay and fixture testing
+
+`cargo test --locked --workspace` includes password/key authentication, modern and opted-in legacy algorithms, TOFU pin changes, command timeouts/truncation/interrupted audit entries, scheduler concurrency/cancellation, CLI audit parity and partial exit codes. Parser goldens live in `crates/nm-collect-ubiquiti/tests/snapshots`; the fixtures are explicitly synthetic. Regenerate parser and screen snapshots together with `INSTA_UPDATE=always cargo test -p nm-collect-ubiquiti --test parsers -p nm-tui --tests`, inspect them, then rerun without the override.
+
+Hardware acceptance is recorded separately in [HARDWARE-TESTING.md](HARDWARE-TESTING.md). The dependency review and scoped RSA advisory exception are documented in [ADR 0005](adr/0005-ssh-transport.md).

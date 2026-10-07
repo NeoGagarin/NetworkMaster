@@ -1,0 +1,54 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::wstalist::parse(&read(\"wstalist.json\")).unwrap()"
+---
+[
+  {
+    "mac": "02:00:00:00:00:02",
+    "hostname": "fixture-host-2",
+    "address": null,
+    "model": null,
+    "chains": [
+      {
+        "chain": 0,
+        "rssi_dbm": -60
+      },
+      {
+        "chain": 1,
+        "rssi_dbm": -62
+      }
+    ],
+    "ccq_pct": 93,
+    "tx_rate_mbps": 120.0,
+    "rx_rate_mbps": 110.0,
+    "distance_m": 1300,
+    "mcs": null,
+    "signal_dbm": -60,
+    "noise_floor_dbm": -95,
+    "uptime_seconds": 900,
+    "airmax": {
+      "quality_pct": 90,
+      "capacity_pct": 85,
+      "priority": 2
+    },
+    "remote": {
+      "hostname": "fixture-host-2",
+      "platform": "XW",
+      "version": "6.3.6",
+      "signal_dbm": -61,
+      "noise_floor_dbm": -96,
+      "tx_power_dbm": 18,
+      "rx_chainmask": 3
+    },
+    "counters": {
+      "rx_bytes": 1000,
+      "tx_bytes": 2000,
+      "rx_packets": null,
+      "tx_packets": null,
+      "rx_errors": null,
+      "tx_errors": null,
+      "rx_dropped": null,
+      "tx_dropped": null
+    }
+  }
+]

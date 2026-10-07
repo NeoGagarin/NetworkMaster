@@ -9,7 +9,7 @@ use std::{
 
 #[derive(Default)]
 struct Inner {
-    secrets: Mutex<HashMap<CredentialProfileId, SecretMaterial>>,
+    secrets: Mutex<HashMap<CredentialProfileId, Arc<SecretMaterial>>>,
 }
 impl Drop for Inner {
     fn drop(&mut self) {
@@ -42,7 +42,7 @@ impl CredArena {
             .secrets
             .lock()
             .map_err(|_| CredsError::Poisoned)?
-            .insert(id, secret);
+            .insert(id, Arc::new(secret));
         Ok(())
     }
     pub fn forget(&self, id: CredentialProfileId) -> Result<(), CredsError> {
@@ -79,6 +79,27 @@ impl CredArena {
             .map_err(|_| CredsError::Poisoned)?;
         let secret = secrets.get(&id).ok_or(CredsError::Missing)?;
         Ok(f(secret))
+    }
+    /// Async closure access without holding the arena mutex across network IO.
+    /// An in-flight authentication owns a lease; forgetting removes the arena's
+    /// reference immediately and the lease zeroizes when authentication ends.
+    pub async fn with_secret_async<R>(
+        &self,
+        id: CredentialProfileId,
+        f: impl for<'s> FnOnce(
+            &'s SecretMaterial,
+        )
+            -> std::pin::Pin<Box<dyn std::future::Future<Output = R> + Send + 's>>,
+    ) -> Result<R, CredsError> {
+        let secret = self
+            .inner
+            .secrets
+            .lock()
+            .map_err(|_| CredsError::Poisoned)?
+            .get(&id)
+            .cloned()
+            .ok_or(CredsError::Missing)?;
+        Ok(f(&secret).await)
     }
     pub fn fingerprints(&self) -> Result<Vec<SecretFingerprint>, CredsError> {
         let secrets = self

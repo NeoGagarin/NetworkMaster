@@ -1,0 +1,7 @@
+deviceName=fixture-host-1,firmwareVersion=XW.ar934x.v6.3.6,uptime=183840,wlanOpmode=sta,ssid=fixture-ssid-1,freq=5805,chanbw=20,signal=-61,noise=-96,ccq=91,txrate=100,rxrate=90,chainrssi=-61:-63
+lanSpeed=1000
+lanPlugged=1
+loadavg=0.10 0.20 0.30
+memTotal=65536
+memFree=45536
+unknown.future=keep-me

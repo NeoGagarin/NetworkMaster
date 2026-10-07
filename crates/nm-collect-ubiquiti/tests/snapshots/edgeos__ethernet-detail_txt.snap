@@ -1,0 +1,144 @@
+---
+source: crates/nm-collect-ubiquiti/tests/edgeos.rs
+expression: facts
+---
+{
+  "system": {
+    "hostname": null,
+    "model": null,
+    "firmware": null,
+    "uptime_seconds": null,
+    "loadavg": null,
+    "cpu_count": null,
+    "memory": null,
+    "serial": null,
+    "ntp_servers": [],
+    "offload": null,
+    "ssh_host_key_changed": null,
+    "ssh_legacy_algorithms": null,
+    "cpu_load_pct": null,
+    "genuine": null,
+    "platform": null,
+    "soc": null,
+    "firmware_build": null,
+    "board_id": null,
+    "netrole": null
+  },
+  "interfaces": [
+    {
+      "name": "eth0",
+      "mac": "02:00:00:00:00:01",
+      "description": null,
+      "admin_up": null,
+      "oper_up": null,
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "counters": {
+        "rx_bytes": 10000,
+        "tx_bytes": 10000,
+        "rx_packets": 100,
+        "tx_packets": 120,
+        "rx_errors": 1,
+        "tx_errors": 0,
+        "rx_dropped": 2,
+        "tx_dropped": 0
+      },
+      "addresses": [],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    },
+    {
+      "name": "eth1",
+      "mac": "02:00:00:00:00:02",
+      "description": null,
+      "admin_up": null,
+      "oper_up": null,
+      "speed_mbps": 100,
+      "duplex": "Half",
+      "counters": {
+        "rx_bytes": null,
+        "tx_bytes": null,
+        "rx_packets": 200,
+        "tx_packets": 220,
+        "rx_errors": 0,
+        "tx_errors": 0,
+        "rx_dropped": 0,
+        "tx_dropped": 0
+      },
+      "addresses": [],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    }
+  ],
+  "addresses": [],
+  "radio": null,
+  "routing": null,
+  "services": {
+    "http": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "https": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ssh": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "telnet": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "snmp": {
+      "enabled": null,
+      "port": null,
+      "community_present": null,
+      "community_is_default": null
+    },
+    "upnp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "discovery": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ntp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_client": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_server": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "pppoe": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    }
+  },
+  "dhcp": null,
+  "firewall": null,
+  "config": null,
+  "neighbors": []
+}

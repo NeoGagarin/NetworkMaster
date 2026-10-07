@@ -1,0 +1,35 @@
+[enabled]
+
+[thresholds.UBNT-RF-001]
+imbalance_db = 6
+
+[thresholds.UBNT-RF-002]
+ccq_pct = 70
+
+[thresholds.UBNT-RF-003]
+airtime_pct = 80
+
+[thresholds.UBNT-RF-004]
+signal_dbm = -75
+
+[thresholds.UBNT-RF-005]
+noise_dbm = -90
+
+[thresholds.UBNT-RF-008]
+wide_mhz = 40
+throughput_mbps = 10
+
+[thresholds.UBNT-PERF-002]
+load_factor = 1.0
+
+[thresholds.UBNT-PERF-003]
+memory_pct = 10
+
+[thresholds.GEN-REL-005]
+uptime_seconds = 86400
+
+[thresholds.GEN-CAP-001]
+pool_ratio = 0.9
+
+[thresholds.GEN-CAP-002]
+max_stations = 60

@@ -1,0 +1,10 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::version::parse(&read(\"version.txt\")).unwrap()"
+---
+{
+  "platform": "XW",
+  "soc": "ar934x",
+  "version": "6.3.6",
+  "build": "33347"
+}

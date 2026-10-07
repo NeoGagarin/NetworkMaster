@@ -1,7 +1,7 @@
 use nm_core::{Device, DeviceId, HostOrIp, Outcome};
 use std::{
     collections::{HashMap, HashSet},
-    net::IpAddr,
+    net::{IpAddr, SocketAddr},
 };
 
 #[derive(Debug, thiserror::Error)]
@@ -20,6 +20,7 @@ pub struct TargetGate {
     addresses: HashSet<IpAddr>,
     devices: HashMap<IpAddr, DeviceId>,
     failures: Vec<ResolutionFailure>,
+    endpoints: HashMap<SocketAddr, DeviceId>,
 }
 impl TargetGate {
     /// Resolve enrolled hostnames once; connections use the resulting IPs, never DNS again.
@@ -59,7 +60,14 @@ impl TargetGate {
                     addresses.sort_unstable();
                     addresses.dedup();
                     for ip in addresses {
-                        if ambiguous.contains(&ip) {
+                        let endpoint = SocketAddr::new(
+                            ip,
+                            device
+                                .management
+                                .port
+                                .unwrap_or(device.family.default_port()),
+                        );
+                        if ambiguous.contains(&endpoint) {
                             gate.failures.push(ResolutionFailure {
                                 device_id: device.id,
                                 reason: format!("ambiguous enrolled address {ip}"),
@@ -67,7 +75,7 @@ impl TargetGate {
                             });
                             continue;
                         }
-                        if let Some(existing) = gate.devices.get(&ip) {
+                        if let Some(existing) = gate.endpoints.get(&endpoint) {
                             if *existing != device.id {
                                 gate.failures.push(ResolutionFailure {
                                     device_id: *existing,
@@ -79,13 +87,11 @@ impl TargetGate {
                                     reason: format!("ambiguous enrolled address {ip}"),
                                     outcome: Outcome::Unreachable,
                                 });
-                                gate.devices.remove(&ip);
-                                gate.addresses.remove(&ip);
-                                ambiguous.insert(ip);
+                                gate.endpoints.remove(&endpoint);
+                                ambiguous.insert(endpoint);
                             }
                         } else {
-                            gate.addresses.insert(ip);
-                            gate.devices.insert(ip, device.id);
+                            gate.endpoints.insert(endpoint, device.id);
                         }
                     }
                 }
@@ -98,6 +104,21 @@ impl TargetGate {
                 }),
             }
         }
+        let mut shared = HashSet::new();
+        for (endpoint, id) in &gate.endpoints {
+            let ip = endpoint.ip();
+            gate.addresses.insert(ip);
+            if gate
+                .devices
+                .insert(ip, *id)
+                .is_some_and(|existing| existing != *id)
+            {
+                shared.insert(ip);
+            }
+        }
+        for ip in shared {
+            gate.devices.remove(&ip);
+        }
         gate
     }
     pub fn check(&self, ip: IpAddr) -> Result<DeviceId, GateError> {
@@ -105,6 +126,12 @@ impl TargetGate {
             .get(&ip)
             .copied()
             .ok_or(GateError::NotEnrolled(ip))
+    }
+    pub fn check_address(&self, address: SocketAddr) -> Result<DeviceId, GateError> {
+        self.endpoints
+            .get(&address)
+            .copied()
+            .ok_or(GateError::NotEnrolled(address.ip()))
     }
     pub fn addresses(&self) -> &HashSet<IpAddr> {
         &self.addresses

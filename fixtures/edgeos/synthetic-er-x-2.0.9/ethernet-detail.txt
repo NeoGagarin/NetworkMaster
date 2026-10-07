@@ -1,0 +1,9 @@
+eth0 Link encap:Ethernet HWaddr 02:00:00:00:00:01
+ RX packets:100 errors:1 dropped:2
+ TX packets:120 errors:0 dropped:0
+ RX bytes:10000 TX bytes:12000
+ Speed: 1000Mb/s Duplex: Full
+eth1 Link encap:Ethernet HWaddr 02:00:00:00:00:02
+ RX packets:200 errors:0 dropped:0
+ TX packets:220 errors:0 dropped:0
+ Speed: 100Mb/s Duplex: Half

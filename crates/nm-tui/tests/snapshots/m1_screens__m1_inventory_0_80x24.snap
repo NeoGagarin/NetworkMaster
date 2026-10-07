@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Inventory  |  pre-alpha 0.0.1                               |
++------------------------------------------------------------------------------+
++Inventory | 1 enrolled / 1 candidates | sort 0 | / ---------------------------+
+|✓   Name           Address        Family     Role    Site    Profile Source   |
+|    Station candid 192.0.2.2      AirOs      —       North   —       Manual   |
+| Y  Tower AP       192.0.2.1      AirOs      —       North   fleet   Manual   |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+n Add  i CSV  d Discover  Space Select  e Enroll  u Unenroll  p Profile  t Site

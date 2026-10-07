@@ -1,0 +1,10 @@
+IPSec offload module: loaded
+HWNAT offload module: not loaded
+IPv4
+ forwarding: disabled
+ vlan: enabled
+ pppoe: disabled
+IPv6
+ forwarding: disabled
+ vlan: disabled
+ pppoe: disabled

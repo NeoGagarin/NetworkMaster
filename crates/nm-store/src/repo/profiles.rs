@@ -10,18 +10,19 @@ impl<'a> ProfileRepo<'a> {
         Self { db }
     }
     pub fn insert(&self, p: &CredentialProfile) -> Result<()> {
-        self.db.lock()?.execute("INSERT INTO credential_profiles (id,name,kind,storage,scope_hint) VALUES (?1,?2,?3,?4,?5)", params![p.id.to_string(),p.name,json(&p.kind)?,json(&p.storage)?,p.scope_hint])?;
+        self.db.lock()?.execute("INSERT INTO credential_profiles (id,name,kind,storage,scope_hint,is_vendor_default) VALUES (?1,?2,?3,?4,?5,?6)", params![p.id.to_string(),p.name,json(&p.kind)?,json(&p.storage)?,p.scope_hint,p.is_vendor_default])?;
         Ok(())
     }
     pub fn update(&self, p: &CredentialProfile) -> Result<()> {
         if self.db.lock()?.execute(
-            "UPDATE credential_profiles SET name=?2,kind=?3,storage=?4,scope_hint=?5 WHERE id=?1",
+            "UPDATE credential_profiles SET name=?2,kind=?3,storage=?4,scope_hint=?5,is_vendor_default=?6 WHERE id=?1",
             params![
                 p.id.to_string(),
                 p.name,
                 json(&p.kind)?,
                 json(&p.storage)?,
-                p.scope_hint
+                p.scope_hint,
+                p.is_vendor_default
             ],
         )? == 0
         {
@@ -34,7 +35,7 @@ impl<'a> ProfileRepo<'a> {
             .db
             .lock()?
             .query_row(
-                "SELECT id,name,kind,storage,scope_hint FROM credential_profiles WHERE id=?1",
+                "SELECT id,name,kind,storage,scope_hint,is_vendor_default FROM credential_profiles WHERE id=?1",
                 [profile_id.to_string()],
                 read,
             )
@@ -43,7 +44,7 @@ impl<'a> ProfileRepo<'a> {
     pub fn list(&self) -> Result<Vec<CredentialProfile>> {
         let conn = self.db.lock()?;
         let mut stmt = conn.prepare(
-            "SELECT id,name,kind,storage,scope_hint FROM credential_profiles ORDER BY id",
+            "SELECT id,name,kind,storage,scope_hint,is_vendor_default FROM credential_profiles ORDER BY id",
         )?;
         let rows = stmt.query_map([], read)?.collect::<rusqlite::Result<_>>()?;
         Ok(rows)
@@ -66,5 +67,6 @@ fn read(r: &Row<'_>) -> rusqlite::Result<CredentialProfile> {
         kind: from_json(r.get(2)?)?,
         storage: from_json(r.get(3)?)?,
         scope_hint: r.get(4)?,
+        is_vendor_default: r.get(5)?,
     })
 }

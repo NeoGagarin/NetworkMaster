@@ -34,11 +34,11 @@ expression: output
 +Collection------------------------------------------------------------------------------------------------------------+
 |Last snapshot: never                                                                                                  |
 |Coverage: --                                                                                                          |
-|No collectors are registered in M0.                                                                                   |
+|airOS SSH collector available. Press 4 for dry run.                                                                   |
 +----------------------------------------------------------------------------------------------------------------------+
 +Quick actions---------------------------------------------------------------------------------------------------------+
 |Add candidates: netmaster inventory add <address>                                                                     |
 |Enroll: netmaster inventory enroll <id>   |   0 Settings   ? Help                                                     |
 +----------------------------------------------------------------------------------------------------------------------+
-Ready. No network actions in M0.
-1 Dashboard  0 Settings  ? Help  q Quit  Ctrl+C Cancel
+Ready. Network actions require enrollment.
+1 Home  2 Inventory  3 Credentials  4 Scan  5 Findings  6 Devices  7 Topology  ? Help

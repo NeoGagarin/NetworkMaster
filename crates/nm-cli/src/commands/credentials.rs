@@ -7,7 +7,7 @@ use nm_core::{CredentialKind, CredentialProfile, CredentialProfileId, StorageMod
 use std::io::{self, BufRead, Read};
 use zeroize::Zeroizing;
 
-async fn read_secret(stdin: bool, prompt: &'static str) -> anyhow::Result<SecretString> {
+pub async fn read_secret(stdin: bool, prompt: &'static str) -> anyhow::Result<SecretString> {
     tokio::task::spawn_blocking(move || -> anyhow::Result<SecretString> {
         let secret = if stdin {
             let mut value = Zeroizing::new(String::new());
@@ -105,6 +105,7 @@ pub async fn add(args: &CredsAdd, json: bool, svc: &AppService) -> anyhow::Resul
         kind,
         storage: StorageMode::SessionOnly,
         scope_hint: args.scope_hint.clone(),
+        is_vendor_default: false,
     };
     svc.add_credential(&profile, secret).await?;
     if json {

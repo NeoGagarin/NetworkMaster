@@ -4,7 +4,7 @@ use ulid::Ulid;
 
 macro_rules! id {
     ($($name:ident),+ $(,)?) => {$ (
-        #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
         #[serde(transparent)]
         pub struct $name(Ulid);
         impl $name { pub fn new() -> Self { Self(Ulid::new()) } }

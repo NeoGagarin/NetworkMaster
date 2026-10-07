@@ -192,9 +192,9 @@ Validate on the bench first thing. If the wrapper path differs on a firmware, re
 ## 5. Done checklist
 
 - [ ] All EdgeOS commands validated on bench; absent ones documented.
-- [ ] Config tree parser redacts every listed secret leaf.
-- [ ] 31 rules implemented with tests and explanations (all of §9.3 except GEN-REL-001).
-- [ ] Findings screen, report, topology screen complete.
-- [ ] `RULES.md` generated and drift-checked in CI.
-- [ ] `capabilities.toml` in place.
-- [ ] Bench: findings on the ER-X and the airOS fleet reviewed for plausibility; thresholds tuned; ADR 0005 records threshold rationale.
+- [x] Config tree parser redacts every listed secret leaf.
+- [x] 34 rules implemented with tests and explanations (all of §9.3 except GEN-REL-001).
+- [x] Findings screen, report, topology screen complete.
+- [x] `RULES.md` generated and drift-checked in CI.
+- [x] `capabilities.toml` in place.
+- [ ] Bench: findings on the ER-X and the airOS fleet reviewed for plausibility; thresholds tuned; ADR 0006 records threshold rationale (0005 is the SSH transport ADR).

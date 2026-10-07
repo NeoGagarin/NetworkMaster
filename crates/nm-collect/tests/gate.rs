@@ -12,6 +12,8 @@ fn device(address: &str, enrolled: bool) -> Device {
         credential_profile: None,
         source: EnrollmentSource::Manual,
         enrolled,
+        ssh_legacy_ok: false,
+        interface_roles: std::collections::BTreeMap::default(),
         tags: vec![],
     }
 }
@@ -25,6 +27,24 @@ async fn candidates_never_enter_gate() {
         gate.check("192.0.2.11".parse().unwrap()).unwrap(),
         enrolled.id
     );
+}
+#[tokio::test]
+async fn same_ip_different_ports_are_distinct_and_unenrolled_ports_are_denied() {
+    let first = device("192.0.2.1:2222", true);
+    let second = device("192.0.2.1:2223", true);
+    let gate = TargetGate::new(&[first.clone(), second.clone()]).await;
+    assert_eq!(
+        gate.check_address("192.0.2.1:2222".parse().unwrap())
+            .unwrap(),
+        first.id
+    );
+    assert_eq!(
+        gate.check_address("192.0.2.1:2223".parse().unwrap())
+            .unwrap(),
+        second.id
+    );
+    assert!(gate.check_address("192.0.2.1:22".parse().unwrap()).is_err());
+    assert!(gate.failures().is_empty());
 }
 #[tokio::test]
 async fn hostname_resolves_once_and_duplicate_ips_fail_closed() {

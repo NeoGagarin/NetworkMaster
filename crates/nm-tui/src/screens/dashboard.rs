@@ -52,7 +52,7 @@ pub fn view(app: &App, frame: &mut Frame<'_>, area: Rect) {
     let coverage = if app.ascii { "--" } else { "—" };
     frame.render_widget(
         Paragraph::new(format!(
-            "Last snapshot: {}\nCoverage: {coverage}\nNo collectors are registered in M0.",
+            "Last snapshot: {}\nCoverage: {coverage}\nairOS SSH collector available. Press 4 for dry run.",
             app.dashboard.last_snapshot.as_deref().unwrap_or("never")
         ))
         .block(widgets::block(app, "Collection")),

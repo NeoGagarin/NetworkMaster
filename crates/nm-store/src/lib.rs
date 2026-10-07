@@ -4,7 +4,7 @@ pub mod db;
 pub mod migrations;
 pub mod paths;
 pub mod repo;
-pub use audit::AuditSink;
+pub use audit::{AuditReservation, AuditSink};
 pub use db::Db;
 
 #[derive(Debug, thiserror::Error)]

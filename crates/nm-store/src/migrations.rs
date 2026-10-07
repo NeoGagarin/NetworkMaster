@@ -3,8 +3,12 @@ use rusqlite::Connection;
 use rusqlite_migration::{Migrations, M};
 
 pub fn apply(connection: &mut Connection) -> Result<()> {
-    Migrations::new(vec![M::up(include_str!("../migrations/0001_initial.sql"))])
-        .to_latest(connection)?;
+    Migrations::new(vec![
+        M::up(include_str!("../migrations/0001_initial.sql")),
+        M::up(include_str!("../migrations/0002_airos.sql")),
+        M::up(include_str!("../migrations/0003_analysis.sql")),
+    ])
+    .to_latest(connection)?;
     Ok(())
 }
 #[cfg(test)]
@@ -20,7 +24,7 @@ mod tests {
         assert_eq!(
             conn.query_row("PRAGMA user_version", [], |r| r.get::<_, i64>(0))
                 .unwrap(),
-            1
+            3
         );
         conn.execute("INSERT INTO audit_log (ts,actor,action,target,detail_json,bytes_out,bytes_in) VALUES ('2026-10-06T00:00:00Z','\"System\"','\"DryRun\"','test','{}',0,0)", []).unwrap();
         assert!(conn.execute("DELETE FROM audit_log", []).is_err());

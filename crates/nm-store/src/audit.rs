@@ -1,5 +1,6 @@
 use crate::{repo::AuditRepo, Db, Result, StoreError};
 use nm_core::AuditEvent;
+use std::time::Instant;
 use tokio::sync::{mpsc, oneshot};
 
 enum Message {
@@ -12,6 +13,21 @@ pub struct AuditSink {
     sender: mpsc::Sender<Message>,
 }
 impl AuditSink {
+    /// Reserve ordered queue space before starting an operation. Dropping the
+    /// reservation records interruption even when its future is cancelled.
+    pub async fn reserve(&self, event: AuditEvent) -> Result<AuditReservation> {
+        let permit = self
+            .sender
+            .clone()
+            .reserve_owned()
+            .await
+            .map_err(|_| StoreError::AuditClosed)?;
+        Ok(AuditReservation {
+            permit: Some(permit),
+            event: Some(event),
+            started: Instant::now(),
+        })
+    }
     pub fn new(db: Db, capacity: usize) -> Self {
         let (sender, mut receiver) = mpsc::channel(capacity.max(1));
         tokio::task::spawn_blocking(move || {
@@ -51,5 +67,31 @@ impl AuditSink {
             .await
             .map_err(|_| StoreError::AuditClosed)?
             .map_err(StoreError::AuditWriter)
+    }
+}
+
+pub struct AuditReservation {
+    permit: Option<mpsc::OwnedPermit<Message>>,
+    event: Option<AuditEvent>,
+    started: Instant,
+}
+impl AuditReservation {
+    pub fn complete(mut self, event: AuditEvent) {
+        self.event = Some(event);
+        self.send();
+    }
+    fn send(&mut self) {
+        if let (Some(permit), Some(event)) = (self.permit.take(), self.event.take()) {
+            permit.send(Message::Append(event));
+        }
+    }
+}
+impl Drop for AuditReservation {
+    fn drop(&mut self) {
+        if let Some(event) = &mut self.event {
+            event.detail["error"] = "operation interrupted".into();
+            event.detail["duration_ms"] = serde_json::json!(self.started.elapsed().as_millis());
+        }
+        self.send();
     }
 }

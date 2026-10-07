@@ -39,14 +39,36 @@ pub enum Command {
         site: Option<String>,
         #[arg(long)]
         concurrency: Option<usize>,
+        #[arg(long)]
+        per_site: Option<usize>,
+        #[arg(long)]
+        family: Option<DeviceFamily>,
+        #[command(flatten)]
+        auth: AuthArgs,
     },
     Analyze {
         #[arg(long)]
         snapshot: Option<SnapshotId>,
     },
     Findings {
-        #[arg(long,value_parser=["info","low","medium","high","critical"])]
-        severity: Option<String>,
+        #[arg(long)]
+        severity: Option<nm_core::Severity>,
+        #[arg(long)]
+        category: Option<nm_core::Category>,
+        #[arg(long)]
+        device: Option<DeviceId>,
+        #[arg(long)]
+        rule: Option<nm_core::RuleId>,
+        #[arg(long)]
+        snapshot: Option<SnapshotId>,
+    },
+    Rules {
+        #[command(subcommand)]
+        command: Rules,
+    },
+    Topology {
+        #[arg(long)]
+        snapshot: Option<SnapshotId>,
     },
     Diff {
         snapshot_a: SnapshotId,
@@ -57,6 +79,10 @@ pub enum Command {
         snapshot: SnapshotId,
         #[arg(long)]
         out: PathBuf,
+        #[arg(long,value_parser=["none","names","full"],default_value="full")]
+        redact: String,
+        #[arg(long)]
+        min_severity: Option<nm_core::Severity>,
     },
     Ai {
         #[command(subcommand)]
@@ -92,6 +118,8 @@ pub enum Inventory {
         #[arg(long, default_value = "unknown")]
         family: DeviceFamily,
         #[arg(long)]
+        role: Option<nm_core::DeviceRole>,
+        #[arg(long)]
         site: Option<String>,
         #[arg(long)]
         name: Option<String>,
@@ -103,6 +131,14 @@ pub enum Inventory {
         interface: String,
     },
     List,
+    Unenroll {
+        #[arg(required = true)]
+        ids: Vec<DeviceId>,
+    },
+    AllowLegacy {
+        #[arg(required = true)]
+        ids: Vec<DeviceId>,
+    },
     Enroll {
         #[arg(
             required_unless_present = "all_candidates",
@@ -209,7 +245,16 @@ pub enum Fixture {
         device: DeviceId,
         #[arg(long)]
         out: PathBuf,
+        #[command(flatten)]
+        auth: AuthArgs,
     },
+}
+#[derive(Debug, Args)]
+pub struct AuthArgs {
+    #[arg(long)]
+    pub secret_from_stdin: bool,
+    #[arg(long)]
+    pub key_file: Option<PathBuf>,
 }
 
 // Keep parsing tested independently of opening a database or starting a runtime.
@@ -268,4 +313,13 @@ mod tests {
         ])
         .is_err());
     }
+}
+
+/// Local rule configuration commands.
+#[derive(Debug, Subcommand)]
+pub enum Rules {
+    List,
+    ExportMd,
+    Disable { id: nm_core::RuleId },
+    Enable { id: nm_core::RuleId },
 }

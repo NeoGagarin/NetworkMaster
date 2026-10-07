@@ -1,8 +1,6 @@
 use super::{from_json, id, json};
 use crate::{Db, Result, StoreError};
-use nm_core::{
-    DeviceId, DeviceResult, Finding, RawArtifact, Severity, Snapshot, SnapshotId, Timestamp,
-};
+use nm_core::{DeviceId, DeviceResult, Finding, RawArtifact, Snapshot, SnapshotId, Timestamp};
 use rusqlite::{params, OptionalExtension};
 use sha2::{Digest, Sha256};
 
@@ -84,27 +82,7 @@ impl<'a> SnapshotRepo<'a> {
         }
         let mut stmt = conn.prepare("SELECT id,rule_id,severity,category,title,evidence_json,devices_json,confidence,explanation FROM findings WHERE snapshot_id=?1 ORDER BY severity DESC,id")?;
         let findings = stmt
-            .query_map([snapshot_id.to_string()], |r| {
-                let severity = match r.get::<_, u8>(2)? {
-                    0 => Severity::Info,
-                    1 => Severity::Low,
-                    2 => Severity::Medium,
-                    3 => Severity::High,
-                    4 => Severity::Critical,
-                    _ => return Err(rusqlite::Error::InvalidQuery),
-                };
-                Ok(Finding {
-                    id: id(r.get(0)?)?,
-                    rule_id: id(r.get(1)?)?,
-                    severity,
-                    category: from_json(r.get(3)?)?,
-                    title: r.get(4)?,
-                    evidence: from_json(r.get(5)?)?,
-                    devices: from_json(r.get(6)?)?,
-                    confidence: from_json(r.get(7)?)?,
-                    explanation: r.get(8)?,
-                })
-            })?
+            .query_map([snapshot_id.to_string()], super::findings::read)?
             .collect::<rusqlite::Result<_>>()?;
         let started_at = serde_json::from_value(serde_json::Value::String(started))?;
         let finished_at = finished

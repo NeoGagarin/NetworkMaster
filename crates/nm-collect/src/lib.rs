@@ -4,6 +4,8 @@ pub mod collector;
 pub mod gate;
 pub mod net;
 pub mod plan;
+pub mod scrub;
+pub mod ssh;
 pub use allowlist::SshCommand;
 pub use collector::*;
 pub use gate::*;

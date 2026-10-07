@@ -1,6 +1,7 @@
 """Linux PTY smoke test: real event loop, keys, resize and terminal restoration."""
 
 import fcntl
+import json
 import os
 import pty
 import select
@@ -28,7 +29,18 @@ def drain(master, seconds=0.4):
     return bytes(data)
 
 
-binary = Path(sys.argv[1] if len(sys.argv) > 1 else "target/debug/netmaster").resolve()
+def default_binary():
+    # Ask Cargo, since the target directory can be moved by config or CARGO_TARGET_DIR.
+    metadata = subprocess.run(
+        ["cargo", "metadata", "--format-version", "1", "--no-deps"],
+        capture_output=True,
+        check=True,
+        text=True,
+    ).stdout
+    return Path(json.loads(metadata)["target_directory"]) / "debug" / "netmaster"
+
+
+binary = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else default_binary()
 for key, expected in [(b"q", 0), (b"\x03", 130)]:
     master, slave = pty.openpty()
     before = termios.tcgetattr(slave)

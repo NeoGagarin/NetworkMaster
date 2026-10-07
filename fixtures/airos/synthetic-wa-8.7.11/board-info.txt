@@ -1,0 +1,5 @@
+board.sysid=0xe005
+board.name=Rocket Prism 5AC
+board.shortname=WA
+board.hwaddr=02:00:00:00:00:01
+board.subtype=0

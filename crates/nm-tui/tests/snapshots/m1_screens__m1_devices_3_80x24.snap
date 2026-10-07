@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Devices  |  pre-alpha 0.0.1                                 |
++------------------------------------------------------------------------------+
++Snapshot 1/1 | [ ]--++Tab / Shift+Tab detail----------------------------------+
+|+ Tower AP 100%     || System │ Interfaces │ Radio │ Config │ Raw │ Coverage  |
+|                    |+--------------------------------------------------------+
+|                    |+Config--------------------------------------------------+
+|                    ||sshd.status=enabled                                     |
+|                    ||telnetd.status=disabled                                 |
+|                    ||httpd.status=enabled                                    |
+|                    ||httpd.https.status=enabled                              |
+|                    ||httpd.port=80                                           |
+|                    ||snmp.status=enabled                                     |
+|                    ||snmp.community=<redacted>                               |
+|                    ||discovery.status=disabled                               |
+|                    ||ntpclient.status=enabled                                |
+|                    ||ntpclient.1.server=192.0.2.10                           |
+|                    ||upnpd.status=disabled                                   |
+|                    ||netmode=bridge                                          |
+|                    ||wireless.1.ssid=fixture-ssid-1                          |
+|                    ||wireless.1.security=wpa2                                |
++--------------------++--------------------------------------------------------+
+Ready. Network actions require enrollment.
+Tab Detail  Up/Down Device  [ ] Snapshot  / Search  R Interface role  q Quit

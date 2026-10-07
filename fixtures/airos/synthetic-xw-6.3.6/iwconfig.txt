@@ -1,0 +1,3 @@
+ath0      IEEE 802.11 ESSID:"fixture-ssid-1"
+          Frequency:5.805 GHz  Bit Rate:100 Mb/s
+          Signal level=-65 dBm  Noise level=-96 dBm

@@ -1,1 +1,1 @@
-Reserved for Ubiquiti collectors and parsers starting in M1. No network transport or parsing implementation exists in M0.
+Read-only airOS and `EdgeOS` SSH collectors with pure parsers, coverage and scrubbed raw artifacts. `EdgeOS` parses configuration first and skips unconfigured routing protocols. Explicit interface-scoped UDP discovery produces unenrolled candidates. Parser and discovery fixtures are synthetic; hardware acceptance remains pending.

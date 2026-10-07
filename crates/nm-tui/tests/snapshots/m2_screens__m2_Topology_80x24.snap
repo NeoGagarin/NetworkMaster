@@ -1,0 +1,28 @@
+---
+source: crates/nm-tui/tests/m2_screens.rs
+expression: "term.backend().buffer().content.chunks(usize::from(width)).map(|row|\nrow.iter().map(ratatui::buffer::Cell::symbol).collect::<String>().trim_end().to_owned()).collect::<Vec<_>>().join(\"\\n\")"
+---
++Read-only network assessment--------------------------------------------------+
+|NetworkMaster  |  Topology  |  pre-alpha 0.0.1                                |
++------------------------------------------------------------------------------+
++Topology | Up/Down select | Enter device--------------------------------------+
+|North Site                                                                    |
+|  +-- North AP (5800 MHz / 20 MHz, 1 stations)                                |
+|  |   +-- Unknown station 02:00:00:00:00:02 (signal -76 dBm, chains !)        |
+|  Routers and OSPF adjacencies                                                |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+Up/Down Select  Enter Device  5 Findings  Esc Dashboard

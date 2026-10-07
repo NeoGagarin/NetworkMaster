@@ -1,0 +1,35 @@
+[
+  {
+    "mac": "02:00:00:00:00:02",
+    "name": "fixture-host-2",
+    "signal": -60,
+    "noisefloor": -95,
+    "ccq": 93,
+    "tx": 120,
+    "rx": 110,
+    "chainrssi": [
+      -60,
+      -62
+    ],
+    "distance": 1300,
+    "uptime": 900,
+    "airmax": {
+      "quality": 90,
+      "capacity": 85,
+      "priority": 2
+    },
+    "remote": {
+      "hostname": "fixture-host-2",
+      "platform": "XW",
+      "version": "6.3.6",
+      "signal": -61,
+      "noisefloor": -96,
+      "tx_power": 18,
+      "rx_chainmask": 3
+    },
+    "stats": {
+      "rx_bytes": 1000,
+      "tx_bytes": 2000
+    }
+  }
+]

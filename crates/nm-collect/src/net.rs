@@ -3,6 +3,34 @@ use async_trait::async_trait;
 use std::{io, net::SocketAddr, sync::Arc};
 use tokio::net::{TcpStream, UdpSocket};
 
+#[derive(Clone, Debug)]
+pub struct LocalIface {
+    pub name: String,
+    pub ipv4: std::net::Ipv4Addr,
+    pub broadcast: std::net::Ipv4Addr,
+    pub netmask: std::net::Ipv4Addr,
+}
+pub fn list_local_interfaces() -> io::Result<Vec<LocalIface>> {
+    let mut result = Vec::new();
+    for iface in if_addrs::get_if_addrs()? {
+        if iface.is_loopback() {
+            continue;
+        }
+        if let if_addrs::IfAddr::V4(v4) = iface.addr {
+            if let Some(broadcast) = v4.broadcast {
+                result.push(LocalIface {
+                    name: iface.name,
+                    ipv4: v4.ip,
+                    broadcast,
+                    netmask: v4.netmask,
+                });
+            }
+        }
+    }
+    result.sort_by(|a, b| a.name.cmp(&b.name).then(a.ipv4.cmp(&b.ipv4)));
+    Ok(result)
+}
+
 #[async_trait]
 pub trait NetFactory: Send + Sync {
     async fn tcp_connect(&self, addr: SocketAddr) -> io::Result<TcpStream>;
@@ -20,7 +48,7 @@ impl RealNet {
 impl NetFactory for RealNet {
     async fn tcp_connect(&self, addr: SocketAddr) -> io::Result<TcpStream> {
         self.gate
-            .check(addr.ip())
+            .check_address(addr)
             .map_err(|e| io::Error::new(io::ErrorKind::PermissionDenied, e))?;
         TcpStream::connect(addr).await
     }

@@ -1,0 +1,24 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::ifconfig::parse(&read(\"ifconfig.txt\")).unwrap()"
+---
+[
+  {
+    "name": "eth0",
+    "mac": "02:00:00:00:00:01",
+    "description": null,
+    "admin_up": true,
+    "oper_up": true,
+    "speed_mbps": null,
+    "duplex": null,
+    "counters": null,
+    "addresses": [
+      "192.0.2.1"
+    ],
+    "role": null,
+    "role_confidence": null,
+    "firewall_in": null,
+    "firewall_out": null,
+    "firewall_local": null
+  }
+]

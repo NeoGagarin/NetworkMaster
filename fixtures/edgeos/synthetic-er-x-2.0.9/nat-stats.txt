@@ -1,0 +1,2 @@
+rule packets bytes type
+5000 50 4000 MASQ

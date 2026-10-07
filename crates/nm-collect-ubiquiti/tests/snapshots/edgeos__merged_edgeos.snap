@@ -1,0 +1,300 @@
+---
+source: crates/nm-collect-ubiquiti/tests/edgeos.rs
+expression: facts
+---
+{
+  "system": {
+    "hostname": "fixture-router-1",
+    "model": "EdgeRouter X 5-Port",
+    "firmware": "v2.0.9-hotfix.7",
+    "uptime_seconds": 184440,
+    "loadavg": {
+      "one_min": 0.1,
+      "five_min": 0.2,
+      "fifteen_min": 0.3
+    },
+    "cpu_count": null,
+    "memory": {
+      "total_bytes": 262144000,
+      "available_bytes": 20480000,
+      "free_bytes": 10240000
+    },
+    "serial": "fixture-serial-1",
+    "ntp_servers": [
+      "192.0.2.100"
+    ],
+    "offload": {
+      "ipv4_forwarding": false,
+      "ipv4_vlan": true,
+      "ipv4_pppoe": false,
+      "ipv6_forwarding": false,
+      "ipv6_vlan": false,
+      "ipv6_pppoe": false,
+      "ipsec": null
+    },
+    "ssh_host_key_changed": null,
+    "ssh_legacy_algorithms": null,
+    "cpu_load_pct": null,
+    "genuine": null,
+    "platform": null,
+    "soc": null,
+    "firmware_build": "5622762",
+    "board_id": null,
+    "netrole": "router"
+  },
+  "interfaces": [
+    {
+      "name": "eth0",
+      "mac": "02:00:00:00:00:01",
+      "description": "WAN uplink",
+      "admin_up": true,
+      "oper_up": true,
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "counters": {
+        "rx_bytes": 10000,
+        "tx_bytes": 12000,
+        "rx_packets": 100,
+        "tx_packets": 120,
+        "rx_errors": 1,
+        "tx_errors": 0,
+        "rx_dropped": 2,
+        "tx_dropped": 0
+      },
+      "addresses": [
+        "198.51.100.1/24"
+      ],
+      "role": "Wan",
+      "role_confidence": "Likely",
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    },
+    {
+      "name": "eth1",
+      "mac": "02:00:00:00:00:02",
+      "description": "LAN",
+      "admin_up": true,
+      "oper_up": true,
+      "speed_mbps": 100,
+      "duplex": "Half",
+      "counters": {
+        "rx_bytes": null,
+        "tx_bytes": null,
+        "rx_packets": 200,
+        "tx_packets": 220,
+        "rx_errors": 0,
+        "tx_errors": 0,
+        "rx_dropped": 0,
+        "tx_dropped": 0
+      },
+      "addresses": [
+        "192.0.2.1/24"
+      ],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": "LAN_IN",
+      "firewall_out": null,
+      "firewall_local": null
+    },
+    {
+      "name": "lo",
+      "mac": null,
+      "description": null,
+      "admin_up": true,
+      "oper_up": true,
+      "speed_mbps": null,
+      "duplex": null,
+      "counters": null,
+      "addresses": [
+        "127.0.0.1/8"
+      ],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    }
+  ],
+  "addresses": [],
+  "radio": null,
+  "routing": {
+    "routes": [
+      {
+        "prefix": "0.0.0.0/0",
+        "protocol": "S",
+        "next_hop": "198.51.100.254",
+        "interface": "eth0",
+        "metric": 0
+      },
+      {
+        "prefix": "192.0.2.0/24",
+        "protocol": "C",
+        "next_hop": null,
+        "interface": "eth1",
+        "metric": null
+      },
+      {
+        "prefix": "203.0.113.0/24",
+        "protocol": "O",
+        "next_hop": "192.0.2.2",
+        "interface": "eth1",
+        "metric": 20
+      }
+    ],
+    "ospf_neighbors": [
+      {
+        "router_id": "192.0.2.2",
+        "state": "Full",
+        "address": "192.0.2.2",
+        "interface": "eth1"
+      },
+      {
+        "router_id": "192.0.2.3",
+        "state": "ExStart",
+        "address": "192.0.2.3",
+        "interface": "eth1"
+      }
+    ],
+    "ospf_interfaces": [
+      {
+        "name": "eth1",
+        "area": "0.0.0.0",
+        "cost": 10,
+        "state": "BDR",
+        "dr": "192.0.2.2",
+        "bdr": "192.0.2.1",
+        "hello_seconds": 10,
+        "dead_seconds": 40
+      }
+    ],
+    "bgp_peers": [
+      {
+        "address": "192.0.2.2",
+        "remote_as": 64513,
+        "state": "Established",
+        "prefixes_received": 15
+      },
+      {
+        "address": "192.0.2.3",
+        "remote_as": 64514,
+        "state": "Active",
+        "prefixes_received": null
+      }
+    ],
+    "router_id": "192.0.2.1",
+    "protocol_counts": {
+      "connected": 3,
+      "ospf": 2,
+      "static": 1
+    }
+  },
+  "services": {
+    "http": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "https": {
+      "enabled": true,
+      "port": 443,
+      "listen_addresses": []
+    },
+    "ssh": {
+      "enabled": true,
+      "port": 22,
+      "listen_addresses": []
+    },
+    "telnet": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "snmp": {
+      "enabled": true,
+      "port": null,
+      "community_present": true,
+      "community_is_default": null
+    },
+    "upnp": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "discovery": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ntp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_client": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_server": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "pppoe": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    }
+  },
+  "dhcp": {
+    "pools": [
+      {
+        "name": "LAN",
+        "size": 100,
+        "leased": 95,
+        "available": 5
+      }
+    ]
+  },
+  "firewall": {
+    "rule_sets": [
+      {
+        "name": "LAN_IN",
+        "default_action": "drop",
+        "rules": [
+          {
+            "number": 10,
+            "action": "accept",
+            "packets": 30,
+            "bytes": 2000
+          }
+        ]
+      }
+    ],
+    "nat_rules": [
+      {
+        "number": 5000,
+        "action": "MASQ",
+        "packets": 50,
+        "bytes": 4000
+      }
+    ],
+    "enabled": null,
+    "vendor_fields": {}
+  },
+  "config": {
+    "format": "SetCommands",
+    "text": "set 'firewall' 'name' 'LAN_IN' 'default-action' 'drop'\nset 'firewall' 'name' 'LAN_IN' 'rule' '10' 'action' 'accept'\nset 'interfaces' 'ethernet' 'eth0' 'address' 'dhcp'\nset 'interfaces' 'ethernet' 'eth0' 'description' 'WAN uplink'\nset 'interfaces' 'ethernet' 'eth1' 'address' '192.0.2.1/24'\nset 'interfaces' 'ethernet' 'eth1' 'firewall' 'in' 'name' 'LAN_IN'\nset 'protocols' 'bgp' '64512' 'neighbor' '192.0.2.2' 'remote-as' '64513'\nset 'protocols' 'ospf' 'area' '0' 'network' '192.0.2.0/24'\nset 'protocols' 'ospf' 'parameters' 'router-id' '192.0.2.1'\nset 'service' 'dhcp-server' 'shared-network-name' 'LAN' 'subnet' '192.0.2.0/24' 'start' '192.0.2.10' 'stop' '192.0.2.109'\nset 'service' 'gui' 'https-port' '443'\nset 'service' 'snmp' 'community' '<redacted>'\nset 'service' 'ssh' 'port' '22'\nset 'system' 'host-name' 'fixture-router-1'\nset 'system' 'ntp' 'server' '192.0.2.100'\nset 'system' 'offload' 'ipv4' 'forwarding' 'disable'\n",
+    "secrets_removed": 0
+  },
+  "neighbors": [
+    {
+      "protocol": "arp",
+      "mac": "02:00:00:00:00:03",
+      "address": "192.0.2.2",
+      "hostname": null,
+      "interface": "eth1"
+    }
+  ]
+}

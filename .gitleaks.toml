@@ -6,5 +6,8 @@ title = "NetworkMaster gitleaks config"
 useDefault = true
 
 [allowlist]
-description = "Build output and generated lockfiles"
-paths = ['''^target/''', '''(^|/)Cargo\.lock$''']
+description = "Build output, generated lockfiles and the public SSH replay test key"
+# fixtures/test-keys/rsa is a generated, deliberately public key used only by the
+# in-process SSH replay server in tests. See fixtures/README.md. Nothing else under
+# fixtures/ is exempt.
+paths = ['''^target/''', '''(^|/)Cargo\.lock$''', '''^fixtures/test-keys/rsa(\.pub)?$''']

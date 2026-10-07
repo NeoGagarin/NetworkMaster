@@ -19,6 +19,9 @@ facts!(SystemFacts {
     uptime_seconds: Option<u64>, loadavg: Option<LoadAverage>, cpu_count: Option<u32>,
     memory: Option<MemoryFacts>, serial: Option<String>, ntp_servers: Vec<String>,
     offload: Option<OffloadFacts>,
+    ssh_host_key_changed: Option<bool>, ssh_legacy_algorithms: Option<bool>,
+    cpu_load_pct: Option<f64>, genuine: Option<bool>,
+    platform:Option<String>, soc:Option<String>, firmware_build:Option<String>, board_id:Option<String>, netrole:Option<String>,
 });
 facts!(LoadAverage { one_min: Option<f64>, five_min: Option<f64>, fifteen_min: Option<f64> });
 facts!(MemoryFacts { total_bytes: Option<u64>, available_bytes: Option<u64>, free_bytes: Option<u64> });
@@ -40,6 +43,8 @@ facts!(RadioFacts {
     chains: Vec<ChainSignal>, ccq_pct: Option<u8>, airtime_pct: Option<AirtimeFacts>,
     tx_rate_mbps: Option<f32>, rx_rate_mbps: Option<f32>, stations: Vec<StationFacts>,
     airmax: Option<AirMaxFacts>, distance_m: Option<u32>, mcs: Option<u8>,
+    signal_dbm: Option<i16>, polling_enabled: Option<bool>,
+    mac: Option<String>, throughput_mbps: Option<f64>, security:Option<String>, ssid_hidden:Option<bool>, country_code:Option<u16>, country_obey:Option<bool>,
 });
 facts!(ChainSignal { chain: Option<u8>, rssi_dbm: Option<i16> });
 facts!(AirtimeFacts { tx: Option<f32>, rx: Option<f32>, busy: Option<f32> });
@@ -47,11 +52,17 @@ facts!(StationFacts {
     mac: Option<String>, hostname: Option<String>, address: Option<String>, model: Option<String>,
     chains: Vec<ChainSignal>, ccq_pct: Option<u8>, tx_rate_mbps: Option<f32>,
     rx_rate_mbps: Option<f32>, distance_m: Option<u32>, mcs: Option<u8>,
+    signal_dbm: Option<i16>, noise_floor_dbm: Option<i16>, uptime_seconds: Option<u64>,
+    airmax: Option<AirMaxFacts>, remote: Option<RemoteRadioFacts>, counters: Option<InterfaceCounters>,
+});
+facts!(RemoteRadioFacts {
+    hostname: Option<String>, platform: Option<String>, version: Option<String>,
+    signal_dbm: Option<i16>, noise_floor_dbm: Option<i16>, tx_power_dbm: Option<i16>, rx_chainmask: Option<u8>,
 });
 facts!(AirMaxFacts { quality_pct: Option<u8>, capacity_pct: Option<u8>, priority: Option<u8> });
 facts!(RoutingFacts {
     routes: Vec<RouteFacts>, ospf_neighbors: Vec<OspfNeighbor>, ospf_interfaces: Vec<OspfInterface>,
-    bgp_peers: Vec<BgpPeer>,
+    bgp_peers: Vec<BgpPeer>, router_id: Option<String>, protocol_counts: std::collections::BTreeMap<String,u32>,
 });
 facts!(RouteFacts {
     prefix: Option<String>, protocol: Option<String>, next_hop: Option<String>,
@@ -79,6 +90,10 @@ facts!(ServicesFacts {
     snmp: SnmpFacts,
     upnp: ServiceFacts,
     discovery: ServiceFacts,
+    ntp: ServiceFacts,
+    dhcp_client: ServiceFacts,
+    dhcp_server: ServiceFacts,
+    pppoe: ServiceFacts,
 });
 facts!(ServiceFacts { enabled: Option<bool>, port: Option<u16>, listen_addresses: Vec<String> });
 facts!(SnmpFacts {
@@ -86,7 +101,7 @@ facts!(SnmpFacts {
 });
 facts!(DhcpFacts { pools: Vec<DhcpPool> });
 facts!(DhcpPool { name: Option<String>, size: Option<u32>, leased: Option<u32>, available: Option<u32> });
-facts!(FirewallFacts { rule_sets: Vec<FirewallRuleSet>, nat_rules: Vec<FirewallRule> });
+facts!(FirewallFacts { rule_sets: Vec<FirewallRuleSet>, nat_rules: Vec<FirewallRule>, enabled:Option<bool>, vendor_fields:serde_json::Map<String,serde_json::Value> });
 facts!(FirewallRuleSet { name: Option<String>, default_action: Option<String>, rules: Vec<FirewallRule> });
 facts!(FirewallRule { number: Option<u32>, action: Option<String>, packets: Option<u64>, bytes: Option<u64> });
 facts!(NeighborFacts {

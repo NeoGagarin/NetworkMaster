@@ -1,5 +1,8 @@
+pub mod findings;
+pub use findings::{FindingFilter, FindingsRepo};
 pub mod audit;
 pub mod devices;
+pub mod hostkeys;
 pub mod profiles;
 pub mod settings;
 pub mod sites;

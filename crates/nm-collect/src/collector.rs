@@ -5,6 +5,11 @@ use nm_creds::CredArena;
 use nm_store::AuditSink;
 use std::{sync::Arc, time::Duration};
 use tokio_util::sync::CancellationToken;
+#[derive(Clone, Debug)]
+pub struct CollectEvent {
+    pub device: nm_core::DeviceId,
+    pub state: String,
+}
 
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {
@@ -26,6 +31,20 @@ pub struct CollectCtx {
     pub cancel: CancellationToken,
     pub net: Arc<dyn NetFactory>,
     pub limits: Limits,
+    pub events: Option<tokio::sync::mpsc::Sender<CollectEvent>>,
+    pub partial: Arc<std::sync::Mutex<std::collections::HashMap<nm_core::DeviceId, DeviceResult>>>,
+}
+impl CollectCtx {
+    pub fn save_partial(&self, result: &DeviceResult) {
+        if let Ok(mut partial) = self.partial.lock() {
+            partial.insert(result.device_id, result.clone());
+        }
+    }
+    pub async fn progress(&self, device: nm_core::DeviceId, state: String) {
+        if let Some(events) = &self.events {
+            let _ = events.send(CollectEvent { device, state }).await;
+        }
+    }
 }
 #[derive(Debug, thiserror::Error)]
 pub enum CollectError {

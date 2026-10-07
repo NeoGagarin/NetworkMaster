@@ -20,6 +20,9 @@ pub struct JobCtx {
 }
 #[async_trait]
 pub trait Job: Send + 'static {
+    fn handles_cancellation(&self) -> bool {
+        false
+    }
     async fn run(self, ctx: JobCtx) -> std::result::Result<JobOutcome, JobError>;
 }
 pub struct JobHandle {
@@ -101,15 +104,24 @@ impl JobRunner {
         let cancelled = cancel.clone();
         let (done, receive) = oneshot::channel();
         tokio::spawn(async move {
-            let outcome = tokio::select! {
-                biased;
-                () = cancelled.cancelled() => JobOutcome::Cancelled,
-                result = job.run(ctx) => result.unwrap_or_else(|e| JobOutcome::Failed(e.to_string())),
+            let handles_cancellation = job.handles_cancellation();
+            let outcome = if handles_cancellation {
+                job.run(ctx)
+                    .await
+                    .unwrap_or_else(|e| JobOutcome::Failed(e.to_string()))
+            } else {
+                tokio::select! {
+                    biased;
+                    () = cancelled.cancelled() => JobOutcome::Cancelled,
+                    result = job.run(ctx) => result.unwrap_or_else(|e| JobOutcome::Failed(e.to_string())),
+                }
             };
             let event = match &outcome {
                 JobOutcome::Cancelled => JobEvent::Cancelled,
                 JobOutcome::Failed(error) => JobEvent::Failed(error.clone()),
-                JobOutcome::Completed => JobEvent::Finished(outcome.clone()),
+                JobOutcome::Completed | JobOutcome::Scan { .. } => {
+                    JobEvent::Finished(outcome.clone())
+                }
             };
             drop(permit);
             // The completion handle must not wait on a full event queue; the

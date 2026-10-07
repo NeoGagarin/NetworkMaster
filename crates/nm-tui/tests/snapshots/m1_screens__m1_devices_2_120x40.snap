@@ -1,0 +1,44 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment------------------------------------------------------------------------------------------+
+|NetworkMaster  |  Devices  |  pre-alpha 0.0.1                                                                         |
++----------------------------------------------------------------------------------------------------------------------+
++Snapshot 1/1 | [ ]--------------++Tab / Shift+Tab detail--------------------------------------------------------------+
+|+ Tower AP 100%                 || System │ Interfaces │ Radio │ Config │ Raw │ Coverage                              |
+|                                |+------------------------------------------------------------------------------------+
+|                                |+Radio-------------------------------------------------------------------------------+
+|                                ||Mode: AP                                                                            |
+|                                ||SSID: fixture-ssid-1                                                                |
+|                                ||Frequency 5805 MHz / width 20 MHz                                                   |
+|                                ||TX power 18 dBm                                                                     |
+|                                ||Signal -60 dBm / noise -95 dBm                                                      |
+|                                ||CCQ 92% / TX 120 / RX 110 Mbps                                                      |
+|                                ||Distance 1300 m                                                                     |
+|                                ||airMAX quality 90% / capacity 85%                                                   |
+|                                ||Chain 0 #############        -60 dBm                                                |
+|                                ||Chain 1 ############         -62 dBm                                                |
+|                                ||                                                                                    |
+|                                ||Stations: MAC / name / signal / CCQ / rates                                         |
+|                                ||02:00:00:00:00:02 fixture-host-2                                                    |
+|                                ||  -60 dBm / CCQ 93% / TX 120 / RX 110 Mbps                                          |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
++--------------------------------++------------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+Tab Detail  Up/Down Device  [ ] Snapshot  / Search  R Interface role  q Quit

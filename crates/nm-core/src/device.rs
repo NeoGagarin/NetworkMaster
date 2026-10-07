@@ -14,6 +14,11 @@ pub struct Device {
     pub credential_profile: Option<CredentialProfileId>,
     pub source: EnrollmentSource,
     pub enrolled: bool,
+    #[serde(default)]
+    pub ssh_legacy_ok: bool,
+    /// Explicit interface role overrides, applied during analysis.
+    #[serde(default)]
+    pub interface_roles: std::collections::BTreeMap<String, crate::InterfaceRole>,
     pub tags: Vec<String>,
 }
 impl Device {
@@ -130,7 +135,7 @@ impl FromStr for DeviceFamily {
             "edgeswitch" => Ok(Self::EdgeSwitch),
             "unifi" => Ok(Self::UniFi),
             "uisp" => Ok(Self::Uisp),
-            "unknown" => Ok(Self::Unknown),
+            "unknown" | "auto" => Ok(Self::Unknown),
             _ => Err(format!("unknown device family: {s}")),
         }
     }
@@ -145,6 +150,21 @@ pub enum DeviceRole {
     Gateway,
     Controller,
 }
+impl FromStr for DeviceRole {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_ascii_lowercase().as_str() {
+            "ap" => Ok(Self::Ap),
+            "station" => Ok(Self::Station),
+            "ptp" => Ok(Self::Ptp),
+            "router" => Ok(Self::Router),
+            "switch" => Ok(Self::Switch),
+            "gateway" => Ok(Self::Gateway),
+            "controller" => Ok(Self::Controller),
+            _ => Err(format!("unknown role: {s}")),
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum EnrollmentSource {
     Manual,
@@ -157,6 +177,9 @@ pub struct Site {
     pub id: SiteId,
     pub name: String,
     pub notes: String,
+    /// User supplied maximum expected link distance.
+    #[serde(default)]
+    pub max_distance_m: Option<u32>,
 }
 
 #[cfg(test)]

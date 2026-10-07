@@ -1,0 +1,14 @@
+# Offline baseline checked 2026-10-06. No network request occurs during analysis.
+# Baselines are version comparisons, not assertions of vendor end-of-life status.
+# Sources: https://www.ui.com/compliance/eulock/?direct=true
+# https://www.ui.com.cn/download/software/er-x
+[airos.XM]
+current = "6.3.24"
+[airos.XW]
+current = "6.3.24"
+[airos.XC]
+current = "8.7.25"
+[airos.WA]
+current = "8.7.25"
+[edgeos.ER-X]
+current = "2.0.9-hotfix.7"

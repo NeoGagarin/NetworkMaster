@@ -1,0 +1,2 @@
+              total         used         free       shared      buffers
+Mem:          65536        20000        45536            0         1024

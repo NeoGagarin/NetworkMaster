@@ -24,5 +24,5 @@ expression: output
 |                                                                              |
 |                                                                              |
 +------------------------------------------------------------------------------+
-Ready. No network actions in M0.
-1 Dashboard  0 Settings  ? Help  q Quit  Ctrl+C Cancel
+Ready. Network actions require enrollment.
+1 Home  2 Inventory  3 Credentials  4 Scan  5 Findings  6 Devices  7 Topology  ?

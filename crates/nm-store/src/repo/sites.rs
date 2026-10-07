@@ -11,15 +11,25 @@ impl<'a> SiteRepo<'a> {
     }
     pub fn insert(&self, site: &Site) -> Result<()> {
         self.db.lock()?.execute(
-            "INSERT INTO sites VALUES (?1,?2,?3)",
-            params![site.id.to_string(), site.name, site.notes],
+            "INSERT INTO sites (id,name,notes,max_distance_m) VALUES (?1,?2,?3,?4)",
+            params![
+                site.id.to_string(),
+                site.name,
+                site.notes,
+                site.max_distance_m
+            ],
         )?;
         Ok(())
     }
     pub fn update(&self, site: &Site) -> Result<()> {
         if self.db.lock()?.execute(
-            "UPDATE sites SET name=?2,notes=?3 WHERE id=?1",
-            params![site.id.to_string(), site.name, site.notes],
+            "UPDATE sites SET name=?2,notes=?3,max_distance_m=?4 WHERE id=?1",
+            params![
+                site.id.to_string(),
+                site.name,
+                site.notes,
+                site.max_distance_m
+            ],
         )? == 0
         {
             return Err(StoreError::NotFound);
@@ -60,5 +70,6 @@ fn read(r: &Row<'_>) -> rusqlite::Result<Site> {
         id: id(r.get(0)?)?,
         name: r.get(1)?,
         notes: r.get(2)?,
+        max_distance_m: r.get(3)?,
     })
 }

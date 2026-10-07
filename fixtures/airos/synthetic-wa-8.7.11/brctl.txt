@@ -1,0 +1,2 @@
+bridge name	bridge id		STP enabled	interfaces
+br0		8000.020000000001	no		eth0

@@ -1,0 +1,171 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::mca_dump::parse(&read(\"mca-dump.json\")).unwrap()"
+---
+{
+  "system": {
+    "hostname": "fixture-host-1",
+    "model": "Rocket Prism 5AC",
+    "firmware": "8.7.11",
+    "uptime_seconds": 183840,
+    "loadavg": {
+      "one_min": 0.1,
+      "five_min": 0.2,
+      "fifteen_min": 0.3
+    },
+    "cpu_count": null,
+    "memory": {
+      "total_bytes": 67108864,
+      "available_bytes": null,
+      "free_bytes": 46628864
+    },
+    "serial": null,
+    "ntp_servers": [],
+    "offload": null,
+    "ssh_host_key_changed": null,
+    "ssh_legacy_algorithms": null,
+    "cpu_load_pct": 5.0,
+    "genuine": true,
+    "platform": null,
+    "soc": null,
+    "firmware_build": null,
+    "board_id": null,
+    "netrole": "bridge"
+  },
+  "interfaces": [
+    {
+      "name": "eth0",
+      "mac": "02:00:00:00:00:01",
+      "description": null,
+      "admin_up": true,
+      "oper_up": true,
+      "speed_mbps": 1000,
+      "duplex": "Full",
+      "counters": {
+        "rx_bytes": 1000,
+        "tx_bytes": 2000,
+        "rx_packets": null,
+        "tx_packets": null,
+        "rx_errors": 0,
+        "tx_errors": 1,
+        "rx_dropped": 0,
+        "tx_dropped": 0
+      },
+      "addresses": [],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    }
+  ],
+  "addresses": [],
+  "radio": {
+    "mode": "Ap",
+    "ssid": "fixture-ssid-1",
+    "frequency_mhz": 5805,
+    "channel_width_mhz": 40,
+    "tx_power_dbm": 18,
+    "noise_floor_dbm": -95,
+    "chains": [
+      {
+        "chain": 0,
+        "rssi_dbm": -60
+      },
+      {
+        "chain": 1,
+        "rssi_dbm": -62
+      }
+    ],
+    "ccq_pct": 92,
+    "airtime_pct": null,
+    "tx_rate_mbps": 120.0,
+    "rx_rate_mbps": 110.0,
+    "stations": [],
+    "airmax": {
+      "quality_pct": 90,
+      "capacity_pct": 85,
+      "priority": 2
+    },
+    "distance_m": 1300,
+    "mcs": null,
+    "signal_dbm": -60,
+    "polling_enabled": true,
+    "mac": null,
+    "throughput_mbps": null,
+    "security": null,
+    "ssid_hidden": null,
+    "country_code": null,
+    "country_obey": null
+  },
+  "routing": null,
+  "services": {
+    "http": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "https": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ssh": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "telnet": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "snmp": {
+      "enabled": null,
+      "port": null,
+      "community_present": null,
+      "community_is_default": null
+    },
+    "upnp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "discovery": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ntp": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_client": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_server": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "pppoe": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    }
+  },
+  "dhcp": null,
+  "firewall": {
+    "rule_sets": [],
+    "nat_rules": [],
+    "enabled": false,
+    "vendor_fields": {
+      "enabled": false
+    }
+  },
+  "config": null,
+  "neighbors": []
+}

@@ -94,6 +94,63 @@ pub async fn run(mut svc: AppService) -> anyhow::Result<RunOutcome> {
                         Err(error) => app.status_line = format!("Could not save settings: {error}"),
                     }
                 }
+                Effect::AddCredential { profile, secret } => {
+                    match svc.add_credential(&profile, secret).await {
+                        Ok(()) => {
+                            app.status_line = "Session credential added.".into();
+                            app.refresh(&svc)?;
+                        }
+                        Err(e) => app.status_line = e.to_string(),
+                    }
+                }
+                Effect::ForgetCredential(id) => match svc.forget_credential(id).await {
+                    Ok(()) => {
+                        app.status_line = "Credential forgotten and devices unassigned.".into();
+                        app.refresh(&svc)?;
+                    }
+                    Err(e) => app.status_line = e.to_string(),
+                },
+                Effect::StartScan { devices, dry_run } => {
+                    match svc
+                        .scan_job(
+                            devices,
+                            dry_run,
+                            app.scan.global,
+                            app.scan.per_site,
+                            tokio_util::sync::CancellationToken::new(),
+                        )
+                        .await
+                        .and_then(|job| svc.jobs.spawn(job).map_err(nm_app::AppError::from))
+                    {
+                        Ok(_) => app.interrupted = false,
+                        Err(e) => app.status_line = e.to_string(),
+                    }
+                }
+                Effect::Discover(iface) => {
+                    let (send, receive) = tokio::sync::oneshot::channel();
+                    app.discovery = Some(receive);
+                    let net = svc.net.clone();
+                    let audit = svc.audit.clone();
+                    tokio::spawn(async move {
+                        let result = nm_collect_ubiquiti::discovery::discover(
+                            net.as_ref(),
+                            &audit,
+                            &iface,
+                            Duration::from_secs(3),
+                        )
+                        .await
+                        .map(|devices| {
+                            devices
+                                .iter()
+                                .filter_map(
+                                    nm_collect_ubiquiti::discovery::DiscoveredDevice::candidate,
+                                )
+                                .collect()
+                        })
+                        .map_err(|e| e.to_string());
+                        let _ = send.send(result);
+                    });
+                }
             }
         }
         if let Some(outcome) = exit {

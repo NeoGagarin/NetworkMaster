@@ -1,0 +1,16 @@
+set system host-name 'fixture-router-1'
+set system ntp server 192.0.2.100
+set interfaces ethernet eth0 address 'dhcp'
+set interfaces ethernet eth0 description 'WAN uplink'
+set interfaces ethernet eth1 address '192.0.2.1/24'
+set interfaces ethernet eth1 firewall in name 'LAN_IN'
+set service ssh port '22'
+set service gui https-port '443'
+set service snmp community '<redacted>' authorization 'ro'
+set protocols ospf parameters router-id '192.0.2.1'
+set protocols ospf area 0 network '192.0.2.0/24'
+set protocols bgp 64512 neighbor 192.0.2.2 remote-as 64513
+set system offload ipv4 forwarding 'disable'
+set firewall name LAN_IN default-action 'drop'
+set firewall name LAN_IN rule 10 action 'accept'
+set service dhcp-server shared-network-name LAN subnet 192.0.2.0/24 start 192.0.2.10 stop 192.0.2.109

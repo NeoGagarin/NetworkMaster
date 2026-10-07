@@ -17,11 +17,25 @@ pub struct AppConfig {
     pub data_dir: Option<PathBuf>,
     pub deny_network: bool,
 }
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Settings {
     pub theme: ThemeChoice,
     pub ascii: bool,
+    pub auto_analyze: bool,
+    pub max_concurrent_devices: usize,
+    pub max_concurrent_per_site: usize,
+}
+impl Default for Settings {
+    fn default() -> Self {
+        Self {
+            theme: ThemeChoice::Dark,
+            ascii: false,
+            auto_analyze: true,
+            max_concurrent_devices: 8,
+            max_concurrent_per_site: 2,
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ThemeChoice {
@@ -30,7 +44,7 @@ pub enum ThemeChoice {
     HighContrast,
     NoColor,
 }
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct CollectorRegistry {
     collectors: HashMap<DeviceFamily, Arc<dyn Collector>>,
 }
@@ -72,10 +86,17 @@ impl AppService {
         } else {
             Arc::new(RealNet::new(Arc::new(TargetGate::default())))
         };
+        let mut collectors = CollectorRegistry::default();
+        collectors.register(Arc::new(nm_collect_ubiquiti::airos::AirOsCollector::new(
+            db.clone(),
+        )));
+        collectors.register(Arc::new(nm_collect_ubiquiti::edgeos::EdgeOsCollector::new(
+            db.clone(),
+        )));
         Ok(Self {
             db,
             creds: Arc::new(CredArena::new()),
-            collectors: CollectorRegistry::default(),
+            collectors,
             jobs,
             settings,
             audit,
@@ -111,6 +132,8 @@ impl AppService {
             cancel,
             net,
             limits: Limits::default(),
+            events: None,
+            partial: Arc::default(),
         })
     }
     pub async fn add_credential(
@@ -124,7 +147,9 @@ impl AppService {
         if !secret.matches(&profile.kind) {
             return Err(crate::CredsError::KindMismatch.into());
         }
-        ProfileRepo::new(&self.db).insert(profile)?;
+        let mut metadata = profile.clone();
+        metadata.is_vendor_default = secret.is_vendor_default(&profile.kind);
+        ProfileRepo::new(&self.db).insert(&metadata)?;
         self.creds.insert(profile.id, secret)?;
         self.record(
             AuditAction::CredentialCreated,
@@ -145,6 +170,55 @@ impl AppService {
         .await?;
         self.audit.flush().await?;
         Ok(())
+    }
+    pub async fn forget_credential(&self, id: nm_core::CredentialProfileId) -> Result<()> {
+        self.creds.forget(id)?;
+        let devices = DeviceRepo::new(&self.db).list(&DeviceFilter::default())?;
+        let ids: Vec<_> = devices
+            .iter()
+            .filter(|d| d.credential_profile == Some(id))
+            .map(|d| d.id)
+            .collect();
+        crate::inventory::InventoryService::new(&self.db).assign_profile(&ids, None)?;
+        ProfileRepo::new(&self.db).delete(id)?;
+        self.record(
+            AuditAction::CredentialForgotten,
+            id.to_string(),
+            serde_json::json!({"storage":"session-only"}),
+        )
+        .await?;
+        self.audit.flush().await?;
+        Ok(())
+    }
+    pub async fn scan_job(
+        &self,
+        devices: Vec<nm_core::Device>,
+        dry_run: bool,
+        global: usize,
+        per_site: usize,
+        cancel: CancellationToken,
+    ) -> Result<crate::scan::ScanJob> {
+        if global == 0 || per_site == 0 {
+            return Err(AppError::Invalid(
+                "concurrency must be greater than zero".into(),
+            ));
+        }
+        let ctx = if dry_run {
+            None
+        } else {
+            Some(self.collect_context(cancel).await?)
+        };
+        Ok(crate::scan::ScanJob {
+            data_dir: self.data_dir.clone(),
+            devices,
+            dry_run,
+            global,
+            per_site,
+            db: self.db.clone(),
+            audit: self.audit.clone(),
+            collectors: self.collectors.clone(),
+            ctx,
+        })
     }
     pub async fn record(
         &self,

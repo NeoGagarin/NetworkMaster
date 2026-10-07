@@ -6,6 +6,10 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ### Added
 
+- M2 EdgeOS SSH collector, redacted configuration tree, synthetic parser fixtures and shared Linux parsers.
+- Deterministic catalog of 34 single-snapshot rules, configurable thresholds, panic isolation and atomic findings replacement.
+- Findings and Topology screens, interface role overrides, filtered Markdown reports and analysis CLI commands.
+- Offline capability and firmware tables, generated rule documentation and CI drift checks.
 - M0 foundation: eleven-crate Rust workspace, shared domain types and bundled SQLite migrations.
 - Candidate inventory, explicit enrollment, metadata profiles, settings and append-only audit storage.
 - Session credential arena with redacted debugging, zeroization and compile-fail serialization checks.

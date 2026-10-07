@@ -1,0 +1,44 @@
+---
+source: crates/nm-tui/tests/m1_screens.rs
+expression: text
+---
++Read-only network assessment------------------------------------------------------------------------------------------+
+|NetworkMaster  |  Devices  |  pre-alpha 0.0.1                                                                         |
++----------------------------------------------------------------------------------------------------------------------+
++Snapshot 1/1 | [ ]--------------++Tab / Shift+Tab detail--------------------------------------------------------------+
+|+ Tower AP 100%                 || System │ Interfaces │ Radio │ Config │ Raw │ Coverage                              |
+|                                |+------------------------------------------------------------------------------------+
+|                                |+Coverage----------------------------------------------------------------------------+
+|                                ||Skipped by configuration:                                                           |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||Outcome OK                                                                          |
+|                                ||                                                                                    |
+|                                ||Expected:                                                                           |
+|                                ||mca-status                                                                          |
+|                                ||mca-dump                                                                            |
+|                                ||                                                                                    |
+|                                ||Collected:                                                                          |
+|                                ||mca-status                                                                          |
+|                                ||mca-dump                                                                            |
+|                                ||                                                                                    |
+|                                ||Missing:                                                                            |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||Sources:                                                                            |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||Errors:                                                                             |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
+|                                ||                                                                                    |
++--------------------------------++------------------------------------------------------------------------------------+
+Ready. Network actions require enrollment.
+Tab Detail  Up/Down Device  [ ] Snapshot  / Search  R Interface role  q Quit

@@ -1,0 +1,5 @@
+Version: v2.0.9-hotfix.7
+Build ID: 5622762
+HW model: EdgeRouter X 5-Port
+HW S/N: fixture-serial-1
+Uptime: 12:00:00 up 2 days, 3:14

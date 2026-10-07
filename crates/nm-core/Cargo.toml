@@ -8,6 +8,8 @@ repository.workspace = true
 [lints]
 workspace = true
 [dependencies]
+toml.workspace = true
+regex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 ulid.workspace = true

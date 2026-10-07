@@ -93,8 +93,8 @@ fn stubs_and_usage_have_stable_exit_codes() {
     command(dir.path())
         .args(["scan", "--dry-run"])
         .assert()
-        .code(2)
-        .stderr(predicate::str::contains("planned for M1"));
+        .code(3)
+        .stdout(predicate::str::contains("No enrolled devices"));
     command(dir.path())
         .args(["creds", "add", "fleet", "--persist"])
         .assert()

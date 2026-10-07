@@ -1,0 +1,5 @@
+Interface  IP Address  S/L  Description
+---------  ----------  ---  -----------
+eth0       198.51.100.1/24 u/u WAN uplink
+eth1       192.0.2.1/24 u/u LAN
+lo         127.0.0.1/8 u/u

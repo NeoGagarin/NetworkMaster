@@ -1,0 +1,11 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+expression: "parse::board_info::parse(&read(\"board-info.txt\")).unwrap()"
+---
+{
+  "sysid": "0xe005",
+  "name": "Rocket Prism 5AC",
+  "shortname": "WA",
+  "hwaddr": "02:00:00:00:00:01",
+  "subtype": "0"
+}
