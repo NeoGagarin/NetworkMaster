@@ -5,20 +5,36 @@ use nm_creds::CredArena;
 use nm_store::AuditSink;
 use std::{sync::Arc, time::Duration};
 use tokio_util::sync::CancellationToken;
+/// Progress reported by a collector while it works on one device.
 #[derive(Clone, Debug)]
-pub struct CollectEvent {
-    pub device: nm_core::DeviceId,
-    pub state: String,
+pub enum CollectEvent {
+    /// Free-text state for display, such as `running mca-status`.
+    State {
+        device: nm_core::DeviceId,
+        state: String,
+    },
+    /// The device offers only deprecated SSH algorithms and needs explicit opt-in.
+    LegacyRequired {
+        device: nm_core::DeviceId,
+        algorithms: Vec<String>,
+    },
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct Limits {
+    /// TCP connect, key exchange and authentication together.
+    pub connect_timeout: Duration,
+    /// One allowlisted command, from exec to channel close.
     pub per_command_timeout: Duration,
+    /// Everything for one device, including connection.
     pub per_device_budget: Duration,
 }
 impl Default for Limits {
     fn default() -> Self {
         Self {
+            // Group1 Diffie-Hellman on a loaded 32 MB radio can take well over
+            // the per-command budget, so connection gets its own.
+            connect_timeout: Duration::from_secs(45),
             per_command_timeout: Duration::from_secs(20),
             per_device_budget: Duration::from_secs(120),
         }
@@ -41,8 +57,16 @@ impl CollectCtx {
         }
     }
     pub async fn progress(&self, device: nm_core::DeviceId, state: String) {
+        self.emit(CollectEvent::State { device, state }).await;
+    }
+    /// Report that collection stopped because the device needs the legacy SSH opt-in.
+    pub async fn legacy_required(&self, device: nm_core::DeviceId, algorithms: Vec<String>) {
+        self.emit(CollectEvent::LegacyRequired { device, algorithms })
+            .await;
+    }
+    async fn emit(&self, event: CollectEvent) {
         if let Some(events) = &self.events {
-            let _ = events.send(CollectEvent { device, state }).await;
+            let _ = events.send(event).await;
         }
     }
 }

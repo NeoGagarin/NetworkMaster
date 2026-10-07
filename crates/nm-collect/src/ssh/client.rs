@@ -222,7 +222,7 @@ impl SshTransport {
                 legacy: legacy_used.load(Ordering::SeqCst),
             })
         };
-        tokio::select! { ()=ctx.cancel.cancelled()=>Err(SshError::Cancelled), result=tokio::time::timeout(ctx.limits.per_command_timeout,future)=>result.map_err(|_|SshError::Timeout)? }
+        tokio::select! { ()=ctx.cancel.cancelled()=>Err(SshError::Cancelled), result=tokio::time::timeout(ctx.limits.connect_timeout,future)=>result.map_err(|_|SshError::Timeout)? }
     }
 }
 pub struct SshSession {

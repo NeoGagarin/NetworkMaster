@@ -237,3 +237,32 @@ async fn seeded_m1_screen_snapshots() {
     }
     svc.shutdown().await.unwrap();
 }
+
+#[tokio::test]
+async fn legacy_required_event_queues_the_opt_in_modal() {
+    let dir = tempfile::tempdir().unwrap();
+    let svc = AppService::open(AppConfig {
+        data_dir: Some(dir.path().into()),
+        deny_network: true,
+    })
+    .unwrap();
+    let mut app = App::new(&svc).unwrap();
+    let device = DeviceId::new();
+    update(
+        &mut app,
+        Action::Job(nm_app::JobEvent::LegacyRequired {
+            device,
+            algorithms: vec!["ssh-rsa".into(), "diffie-hellman-group1-sha1".into()],
+        }),
+        &svc,
+    );
+    update(&mut app, Action::Tick, &svc);
+    assert!(matches!(app.modal, Some(nm_tui::app::Modal::Legacy(id)) if id == device));
+    let mut terminal = Terminal::new(TestBackend::new(80, 24)).unwrap();
+    terminal.draw(|f| view(&app, f)).unwrap();
+    let rendered = terminal.backend().to_string();
+    assert!(
+        rendered.contains("diffie-hellman-group1-sha1"),
+        "{rendered}"
+    );
+}

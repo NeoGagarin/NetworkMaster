@@ -20,6 +20,8 @@ pub struct ScanState {
     pub total: usize,
     pub snapshot: Option<SnapshotId>,
     pub legacy_queue: Vec<DeviceId>,
+    /// Algorithms each queued device offered, shown in the opt-in modal.
+    pub legacy_algorithms: BTreeMap<DeviceId, Vec<String>>,
     pub expanded: bool,
     pub preview_devices: Vec<nm_core::Device>,
 }
@@ -39,6 +41,7 @@ impl Default for ScanState {
             total: 0,
             snapshot: None,
             legacy_queue: vec![],
+            legacy_algorithms: BTreeMap::new(),
             expanded: true,
             preview_devices: vec![],
         }

@@ -334,7 +334,12 @@ pub fn update(app: &mut App, action: Action, svc: &AppService) -> Vec<Effect> {
                 }
                 JobEvent::DeviceState { device, state } => {
                     app.scan.states.insert(*device, state.clone());
-                    if state.starts_with("legacy required:") {
+                }
+                JobEvent::LegacyRequired { device, algorithms } => {
+                    app.scan
+                        .legacy_algorithms
+                        .insert(*device, algorithms.clone());
+                    if !app.scan.legacy_queue.contains(device) {
                         app.scan.legacy_queue.push(*device);
                     }
                 }
@@ -376,6 +381,9 @@ pub fn update(app: &mut App, action: Action, svc: &AppService) -> Vec<Effect> {
                 JobEvent::Started { total } => format!("{total} devices queued."),
                 JobEvent::DeviceStarted(id) => format!("{}: connecting", name(id)),
                 JobEvent::DeviceState { device, state } => format!("{}: {state}", name(device)),
+                JobEvent::LegacyRequired { device, .. } => {
+                    format!("{}: legacy SSH opt-in required", name(device))
+                }
                 JobEvent::DeviceFinished(id, _) => format!(
                     "{}: {}",
                     name(id),

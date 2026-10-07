@@ -14,8 +14,7 @@ impl SshCommand {
         self.0
     }
 }
-// Private constructor, reserved for named M1/M2 constants in this module only.
-#[allow(dead_code)]
+// Private constructor, reserved for the named constants in this module only.
 const fn cmd(s: &'static str) -> SshCommand {
     SshCommand(s)
 }

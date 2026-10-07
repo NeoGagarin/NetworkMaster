@@ -4,6 +4,18 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ## [Unreleased]
 
+### Changed
+
+- The legacy SSH opt-in is now a typed job event carrying the algorithms the device offered, and the TUI modal shows them, instead of matching a progress-message prefix.
+- SSH connection, key exchange and authentication have their own 45 second budget instead of sharing the 20 second per-command timeout.
+
+### Fixed
+
+- The forbidden-command test now rejects shell metacharacters, interpreters and privilege escalation (`| & ; $() < >`, `sudo`, `sh`, `tee`, `sed`, `chmod`, …), not only mutating verbs.
+- A parser disagreement while merging interface facts is recorded as a coverage error instead of panicking the whole scan job.
+- The analysis migration quotes its JSON default as a string literal.
+- Findings loaded with a snapshot now use the same canonical order as the rules runner and the findings query. Ordering by id made the Findings screen order depend on inventory ids, which flipped equal-severity rows between runs.
+
 ### Added
 
 - M2 EdgeOS SSH collector, redacted configuration tree, synthetic parser fixtures and shared Linux parsers.

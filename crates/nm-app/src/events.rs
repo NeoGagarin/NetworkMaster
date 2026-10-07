@@ -14,11 +14,24 @@ pub enum JobOutcome {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum JobEvent {
-    Started { total: usize },
+    Started {
+        total: usize,
+    },
     DeviceStarted(DeviceId),
-    DeviceState { device: DeviceId, state: String },
+    DeviceState {
+        device: DeviceId,
+        state: String,
+    },
+    /// The device offers only deprecated SSH algorithms; the user must opt in per device.
+    LegacyRequired {
+        device: DeviceId,
+        algorithms: Vec<String>,
+    },
     DeviceFinished(DeviceId, Outcome),
-    Progress { done: usize, total: usize },
+    Progress {
+        done: usize,
+        total: usize,
+    },
     Log(String),
     Finished(JobOutcome),
     Cancelled,

@@ -464,15 +464,88 @@ pub fn view(app: &App, frame: &mut Frame<'_>) {
     let Some(modal) = &app.modal else {
         return;
     };
-    let (title,text)=match modal {
-        Modal::Form(f)=>{let lines=f.fields.iter().enumerate().map(|(i,v)|format!("{} {}: {}{}",if i==f.cursor{">"}else{" "},v.label,if v.secret{if v.value.is_empty(){String::new()}else{"********".into()}}else{v.value.to_string()},if v.choices.is_empty(){""}else{"  [Left/Right]"})).collect::<Vec<_>>().join("\n");("Enter saves | Tab next | Esc cancels",format!("{lines}\n\n{}",if matches!(f.kind,FormKind::Credential){"Session-only; persistent storage arrives in M5"}else{""}))},
-        Modal::Picker(p)=>("Up/Down choose | Enter selects | Esc cancels",p.options.iter().enumerate().map(|(i,(name,_))|format!("{} {name}",if i==p.cursor{">"}else{" "})).collect::<Vec<_>>().join("\n")),
-        Modal::ConfirmQuit=>("Confirm quit","A job is active. Cancel it and quit?\n\ny Yes   n / Esc Stay".into()),
-        Modal::Remove(ids)=>("Remove inventory",format!("Remove {} selected devices? [y/N]",ids.len())),
-        Modal::Forget(_)=>("Forget credential","Forget this credential and unassign its devices? [y/N]".into()),
-        Modal::ConfirmScan(devices)=>("Start read-only scan",format!("Read-only; {} devices; commands shown in dry run.\nStart? [y/N]",devices.len())),
-        Modal::Legacy(_)=>("Legacy SSH opt-in","This device only offers deprecated SSH algorithms\n(dh-group1-sha1, ssh-rsa).\nAllow for this device? [y/N]".into()),
-        Modal::EnrollDiscovery(ids)=>("Enroll discovered candidates",format!("Enroll {} checked candidates? [y/N]",ids.len())),
+    let (title, text) = match modal {
+        Modal::Form(f) => {
+            let lines = f
+                .fields
+                .iter()
+                .enumerate()
+                .map(|(i, v)| {
+                    format!(
+                        "{} {}: {}{}",
+                        if i == f.cursor { ">" } else { " " },
+                        v.label,
+                        if v.secret {
+                            if v.value.is_empty() {
+                                String::new()
+                            } else {
+                                "********".into()
+                            }
+                        } else {
+                            v.value.to_string()
+                        },
+                        if v.choices.is_empty() {
+                            ""
+                        } else {
+                            "  [Left/Right]"
+                        }
+                    )
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
+            (
+                "Enter saves | Tab next | Esc cancels",
+                format!(
+                    "{lines}\n\n{}",
+                    if matches!(f.kind, FormKind::Credential) {
+                        "Session-only; persistent storage arrives in M5"
+                    } else {
+                        ""
+                    }
+                ),
+            )
+        }
+        Modal::Picker(p) => (
+            "Up/Down choose | Enter selects | Esc cancels",
+            p.options
+                .iter()
+                .enumerate()
+                .map(|(i, (name, _))| format!("{} {name}", if i == p.cursor { ">" } else { " " }))
+                .collect::<Vec<_>>()
+                .join("\n"),
+        ),
+        Modal::ConfirmQuit => (
+            "Confirm quit",
+            "A job is active. Cancel it and quit?\n\ny Yes   n / Esc Stay".into(),
+        ),
+        Modal::Remove(ids) => (
+            "Remove inventory",
+            format!("Remove {} selected devices? [y/N]", ids.len()),
+        ),
+        Modal::Forget(_) => (
+            "Forget credential",
+            "Forget this credential and unassign its devices? [y/N]".into(),
+        ),
+        Modal::ConfirmScan(devices) => (
+            "Start read-only scan",
+            format!(
+                "Read-only; {} devices; commands shown in dry run.\nStart? [y/N]",
+                devices.len()
+            ),
+        ),
+        Modal::Legacy(id) => {
+            let offered = app
+                .scan
+                .legacy_algorithms
+                .get(id)
+                .filter(|a| !a.is_empty())
+                .map_or_else(|| "dh-group1-sha1, ssh-rsa".to_owned(), |a| a.join(", "));
+            ("Legacy SSH opt-in",format!("This device only offers deprecated SSH algorithms:\n{offered}\nAllow for this device? [y/N]"))
+        }
+        Modal::EnrollDiscovery(ids) => (
+            "Enroll discovered candidates",
+            format!("Enroll {} checked candidates? [y/N]", ids.len()),
+        ),
     };
     let area = frame.area();
     let width = area.width.min(72);

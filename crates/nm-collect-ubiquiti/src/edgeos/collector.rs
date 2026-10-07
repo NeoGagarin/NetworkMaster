@@ -116,12 +116,19 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
                         .iter_mut()
                         .find(|i| i.name == incoming.name)
                     {
-                        let mut v = serde_json::to_value(&*existing).unwrap();
-                        crate::airos::collector::merge_interface(
-                            &mut v,
-                            &serde_json::to_value(&incoming).unwrap(),
-                        );
-                        *existing = serde_json::from_value(v).unwrap();
+                        match crate::airos::collector::merge_interface_facts(existing, &incoming) {
+                            Ok(merged) => *existing = merged,
+                            Err(error) => {
+                                coverage.errors.insert(
+                                    format!(
+                                        "{}:interface:{}",
+                                        command.as_str(),
+                                        incoming.name.as_deref().unwrap_or("?")
+                                    ),
+                                    error.to_string(),
+                                );
+                            }
+                        }
                     } else {
                         facts.interfaces.push(incoming);
                     }
@@ -244,9 +251,10 @@ impl Collector for EdgeOsCollector {
                 if matches!(error, SshError::HostKeyChanged { .. }) {
                     result.facts.system.ssh_host_key_changed = Some(true);
                 }
-                if matches!(error, SshError::LegacyAlgorithmsRequired(_)) {
-                    ctx.progress(device.id, format!("legacy required: {error}"))
+                if let SshError::LegacyAlgorithmsRequired(algorithms) = &error {
+                    ctx.progress(device.id, "legacy SSH opt-in required".into())
                         .await;
+                    ctx.legacy_required(device.id, algorithms.clone()).await;
                 }
                 result
                     .coverage

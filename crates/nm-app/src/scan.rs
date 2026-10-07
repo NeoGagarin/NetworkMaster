@@ -161,7 +161,13 @@ impl Job for ScanJob {
         let (mut done, mut ok, mut partial, mut failed_count) = (0, 0, 0, 0);
         while !pending.is_empty() {
             tokio::select! {
-                Some(event)=receive.recv()=>{let _=job.events.send(JobEvent::DeviceState {device:event.device,state:event.state}).await;},
+                Some(event)=receive.recv()=>{
+                    let event = match event {
+                        nm_collect::CollectEvent::State { device, state } => JobEvent::DeviceState { device, state },
+                        nm_collect::CollectEvent::LegacyRequired { device, algorithms } => JobEvent::LegacyRequired { device, algorithms },
+                    };
+                    let _=job.events.send(event).await;
+                },
                 Some(result)=pending.next()=>{
                     match result.outcome {Outcome::Ok=>ok+=1,Outcome::Partial(_)|Outcome::Cancelled=>partial+=1,_=>failed_count+=1}
                     repo.insert_device_result(snapshot.id,&result).map_err(error)?;for raw in &result.raw {repo.insert_raw_artifact(snapshot.id,result.device_id,raw).map_err(error)?;}

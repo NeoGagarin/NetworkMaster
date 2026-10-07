@@ -8,8 +8,8 @@ use nm_collect::{
     Transport,
 };
 use nm_core::{
-    ArtifactKind, Coverage, Device, DeviceFacts, DeviceFamily, DeviceResult, DeviceRole, Outcome,
-    RadioFacts, RawArtifact, SystemFacts,
+    ArtifactKind, Coverage, Device, DeviceFacts, DeviceFamily, DeviceResult, DeviceRole,
+    InterfaceFacts, Outcome, RadioFacts, RawArtifact, SystemFacts,
 };
 use nm_store::{repo::ProfileRepo, Db};
 use sha2::{Digest, Sha256};
@@ -145,23 +145,28 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
         };
         match parsed {
             Ok(mut parsed) => {
-                // Merge interfaces by name, preserving fallback counters/MACs.
+                // Merge interfaces by name, preserving fallback counters/MACs. A merge
+                // failure is device-input driven and must never panic the scan; the
+                // earlier observation is kept and the error is recorded.
                 for incoming in parsed.interfaces.drain(..) {
                     if let Some(existing) = facts
                         .interfaces
                         .iter_mut()
                         .find(|i| i.name == incoming.name)
                     {
-                        let mut old = DeviceFacts {
-                            interfaces: vec![existing.clone()],
-                            ..DeviceFacts::default()
-                        };
-                        // Struct merge for one interface preserves optional observations.
-                        let mut value = serde_json::to_value(&old.interfaces[0]).unwrap();
-                        let extra = serde_json::to_value(&incoming).unwrap();
-                        merge_interface(&mut value, &extra);
-                        old.interfaces[0] = serde_json::from_value(value).unwrap();
-                        *existing = old.interfaces.remove(0);
+                        match merge_interface_facts(existing, &incoming) {
+                            Ok(merged) => *existing = merged,
+                            Err(error) => {
+                                coverage.errors.insert(
+                                    format!(
+                                        "{}:interface:{}",
+                                        command.as_str(),
+                                        incoming.name.as_deref().unwrap_or("?")
+                                    ),
+                                    error.to_string(),
+                                );
+                            }
+                        }
                     } else {
                         facts.interfaces.push(incoming);
                     }
@@ -169,21 +174,7 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
                         .sources
                         .insert("interfaces".into(), command.as_str().into());
                 }
-                let value = serde_json::to_value(&parsed).unwrap();
-                for (section, v) in value.as_object().unwrap() {
-                    if !v.is_null()
-                        && v != &serde_json::to_value(DeviceFacts::default()).unwrap()[section]
-                    {
-                        coverage.sources.insert(
-                            if section == "radio" && command == airos::WSTALIST {
-                                "radio.stations".into()
-                            } else {
-                                section.clone()
-                            },
-                            command.as_str().into(),
-                        );
-                    }
-                }
+                record_sources(coverage, &parsed, command);
                 parse::merge(&mut facts, &parsed);
             }
             Err(e) => {
@@ -200,6 +191,43 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
     crate::edgeos::parse::infer_wan(&mut facts);
     facts
 }
+/// Record which command populated each non-empty top-level facts section.
+fn record_sources(coverage: &mut Coverage, parsed: &DeviceFacts, command: SshCommand) {
+    let (Ok(value), Ok(default)) = (
+        serde_json::to_value(parsed),
+        serde_json::to_value(DeviceFacts::default()),
+    ) else {
+        return;
+    };
+    let Some(sections) = value.as_object() else {
+        return;
+    };
+    for (section, v) in sections {
+        if !v.is_null() && v != &default[section] {
+            coverage.sources.insert(
+                if section == "radio" && command == airos::WSTALIST {
+                    "radio.stations".into()
+                } else {
+                    section.clone()
+                },
+                command.as_str().into(),
+            );
+        }
+    }
+}
+
+/// Overlay `incoming` onto `existing` field by field, keeping observations the
+/// later parser did not provide. Fails instead of panicking when the two
+/// serializations cannot be reconciled.
+pub(crate) fn merge_interface_facts(
+    existing: &InterfaceFacts,
+    incoming: &InterfaceFacts,
+) -> Result<InterfaceFacts, serde_json::Error> {
+    let mut value = serde_json::to_value(existing)?;
+    merge_interface(&mut value, &serde_json::to_value(incoming)?);
+    serde_json::from_value(value)
+}
+
 pub(crate) fn merge_interface(t: &mut serde_json::Value, i: &serde_json::Value) {
     if let (Some(t), Some(i)) = (t.as_object_mut(), i.as_object()) {
         for (k, v) in i {
@@ -281,9 +309,10 @@ impl Collector for AirOsCollector {
                 if matches!(error, SshError::HostKeyChanged { .. }) {
                     result.facts.system.ssh_host_key_changed = Some(true);
                 }
-                if matches!(error, SshError::LegacyAlgorithmsRequired(_)) {
-                    ctx.progress(device.id, format!("legacy required: {error}"))
+                if let SshError::LegacyAlgorithmsRequired(algorithms) = &error {
+                    ctx.progress(device.id, "legacy SSH opt-in required".into())
                         .await;
+                    ctx.legacy_required(device.id, algorithms.clone()).await;
                 }
                 result
                     .coverage
@@ -376,5 +405,39 @@ impl Collector for AirOsCollector {
         }
         let _ = session.close().await;
         Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn merge_keeps_earlier_observations_and_overlays_new_ones() {
+        let existing = InterfaceFacts {
+            name: Some("eth0".into()),
+            mac: Some("02:00:00:00:00:01".into()),
+            speed_mbps: Some(100),
+            ..InterfaceFacts::default()
+        };
+        let incoming = InterfaceFacts {
+            name: Some("eth0".into()),
+            speed_mbps: Some(1000),
+            oper_up: Some(true),
+            ..InterfaceFacts::default()
+        };
+        let merged = merge_interface_facts(&existing, &incoming).unwrap();
+        assert_eq!(merged.mac.as_deref(), Some("02:00:00:00:00:01"));
+        assert_eq!(merged.speed_mbps, Some(1000));
+        assert_eq!(merged.oper_up, Some(true));
+    }
+
+    #[test]
+    fn irreconcilable_merge_is_an_error_not_a_panic() {
+        // A parser emitting a shape the facts type cannot hold must surface as an
+        // error that the collector records in coverage, never as a panic.
+        let mut value = serde_json::to_value(InterfaceFacts::default()).unwrap();
+        merge_interface(&mut value, &serde_json::json!({"speed_mbps": "fast"}));
+        assert!(serde_json::from_value::<InterfaceFacts>(value).is_err());
     }
 }
