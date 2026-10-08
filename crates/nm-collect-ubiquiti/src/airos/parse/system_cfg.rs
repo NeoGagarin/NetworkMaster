@@ -16,7 +16,9 @@ pub fn parse(bytes: &[u8]) -> Result<DeviceFacts, ParseError> {
     let mut f = DeviceFacts::default();
     f.config = Some(RedactedConfig {
         format: ConfigFormat::KeyValue,
-        text: text(&bytes)?.to_owned(),
+        // Normalize line endings so the stored config, and everything derived
+        // from it, is identical whether the capture used LF or CRLF.
+        text: text(&bytes)?.replace("\r\n", "\n"),
         secrets_removed: removed,
     });
     f.services = ServicesFacts {

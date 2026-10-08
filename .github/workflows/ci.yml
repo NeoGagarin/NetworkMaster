@@ -53,6 +53,11 @@ jobs:
           toolchain: ${{ steps.rust.outputs.version }}
           components: clippy, rustfmt
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+        with:
+          # trybuild writes target/tests/<crate>/..., which rust-cache's target
+          # cleanup cannot walk on Windows (ENOENT on target\tests\target).
+          # Keep the registry cache everywhere; skip target caching there.
+          cache-targets: ${{ runner.os != 'Windows' }}
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.x'

@@ -73,3 +73,19 @@ fn optional_vendor_fields_unknown_fields_and_invalid_input() {
     assert!(parse::mca_dump::parse(b"not json").is_err());
     assert!(parse::proc_net_dev::parse(b"eth0: 1 nope").is_err());
 }
+
+#[test]
+fn airos_config_parses_identically_with_crlf_and_lf() {
+    // Windows checkouts and some capture paths deliver CRLF. The stored facts,
+    // including the redacted config text, must not depend on that.
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/airos/synthetic-xw-6.3.6/system.cfg");
+    let lf = String::from_utf8(std::fs::read(root).unwrap())
+        .unwrap()
+        .replace("\r\n", "\n");
+    let crlf = lf.replace('\n', "\r\n");
+    let from_lf = parse::system_cfg::parse(lf.as_bytes()).unwrap();
+    let from_crlf = parse::system_cfg::parse(crlf.as_bytes()).unwrap();
+    assert_eq!(from_lf, from_crlf);
+    assert!(!from_lf.config.unwrap().text.contains('\r'));
+}

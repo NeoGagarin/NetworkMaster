@@ -149,3 +149,21 @@ fn ospf_states_and_unknown_offload_are_not_coerced() {
     assert_eq!(offload.ipv6_forwarding, None);
     assert_eq!(offload.ipv4_forwarding, Some(true));
 }
+
+#[test]
+fn edgeos_config_parses_identically_with_crlf_and_lf() {
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures/edgeos/synthetic-er-x-2.0.9/configuration.txt");
+    let lf = String::from_utf8(std::fs::read(root).unwrap())
+        .unwrap()
+        .replace("\r\n", "\n");
+    let crlf = lf.replace('\n', "\r\n");
+    assert_eq!(
+        parse::config_tree::parse(lf.as_bytes()).unwrap(),
+        parse::config_tree::parse(crlf.as_bytes()).unwrap()
+    );
+    assert_eq!(
+        ConfigTree::parse(lf.as_bytes()).unwrap().serialize(),
+        ConfigTree::parse(crlf.as_bytes()).unwrap().serialize()
+    );
+}

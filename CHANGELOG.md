@@ -14,6 +14,8 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 - The forbidden-command test now rejects shell metacharacters, interpreters and privilege escalation (`| & ; $() < >`, `sudo`, `sh`, `tee`, `sed`, `chmod`, …), not only mutating verbs.
 - A parser disagreement while merging interface facts is recorded as a coverage error instead of panicking the whole scan job.
 - The analysis migration quotes its JSON default as a string literal.
+- Parser output and golden snapshots no longer depend on fixture line endings. The airOS redacted config text is normalized to LF, and CRLF/LF equivalence tests cover both vendors. The committed goldens had been generated from a CRLF working copy and failed on hosted CI.
+- Windows CI no longer caches the target directory, which rust-cache could not clean around trybuild's output.
 - Findings loaded with a snapshot now use the same canonical order as the rules runner and the findings query. Ordering by id made the Findings screen order depend on inventory ids, which flipped equal-severity rows between runs.
 
 ### Added

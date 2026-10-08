@@ -1,5 +1,6 @@
 ---
 source: crates/nm-tui/tests/m1_screens.rs
+assertion_line: 224
 expression: text
 ---
 +Read-only network assessment------------------------------------------------------------------------------------------+
@@ -9,7 +10,7 @@ expression: text
 |+ Tower AP 100%                 || System │ Interfaces │ Radio │ Config │ Raw │ Coverage                              |
 |                                |+------------------------------------------------------------------------------------+
 |                                |+Raw---------------------------------------------------------------------------------+
-|                                ||> mca-dump.json (1305 bytes)                                                        |
+|                                ||> mca-dump.json (1235 bytes)                                                        |
 |                                ||                                                                                    |
 |                                ||                                                                                    |
 |                                ||                                                                                    |
