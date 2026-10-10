@@ -1,0 +1,259 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 82
+expression: "parse::mca_status::parse(&read(\"mca-status.txt\")).expect(concat!\n(\"status\", \" must parse\"))"
+---
+{
+  "facts": {
+    "system": {
+      "hostname": "fixture-host-1",
+      "model": "LiteBeam 5AC Gen2",
+      "firmware": "WA.ar934x.v8.7.22.48486.260227.1959",
+      "uptime_seconds": 143405,
+      "loadavg": null,
+      "cpu_count": null,
+      "memory": {
+        "total_bytes": 63447040,
+        "available_bytes": null,
+        "free_bytes": 19927040
+      },
+      "serial": null,
+      "ntp_servers": [],
+      "offload": null,
+      "ssh_host_key_changed": null,
+      "ssh_legacy_algorithms": null,
+      "cpu_load_pct": 7.0,
+      "genuine": null,
+      "platform": null,
+      "soc": null,
+      "firmware_build": null,
+      "board_id": null,
+      "netrole": null
+    },
+    "interfaces": [
+      {
+        "name": "eth0",
+        "mac": null,
+        "description": null,
+        "admin_up": null,
+        "oper_up": true,
+        "speed_mbps": 100,
+        "duplex": "Full",
+        "counters": {
+          "rx_bytes": 1359564653,
+          "tx_bytes": 29176530413,
+          "rx_packets": 7378805,
+          "tx_packets": 24063258,
+          "rx_errors": 0,
+          "tx_errors": 0,
+          "rx_dropped": null,
+          "tx_dropped": null
+        },
+        "addresses": [],
+        "role": null,
+        "role_confidence": null,
+        "firewall_in": null,
+        "firewall_out": null,
+        "firewall_local": null
+      },
+      {
+        "name": "ath0",
+        "mac": null,
+        "description": null,
+        "admin_up": null,
+        "oper_up": null,
+        "speed_mbps": null,
+        "duplex": null,
+        "counters": {
+          "rx_bytes": 30569225040,
+          "tx_bytes": 1771597514,
+          "rx_packets": 25287229,
+          "tx_packets": 7478832,
+          "rx_errors": 0,
+          "tx_errors": 0,
+          "rx_dropped": null,
+          "tx_dropped": null
+        },
+        "addresses": [],
+        "role": null,
+        "role_confidence": null,
+        "firewall_in": null,
+        "firewall_out": null,
+        "firewall_local": null
+      }
+    ],
+    "addresses": [],
+    "radio": {
+      "mode": "Station",
+      "ssid": "fixture-ssid-1",
+      "frequency_mhz": 5285,
+      "channel_width_mhz": 20,
+      "tx_power_dbm": 24,
+      "noise_floor_dbm": -89,
+      "chains": [
+        {
+          "chain": 0,
+          "rssi_dbm": -72
+        },
+        {
+          "chain": 1,
+          "rssi_dbm": -72
+        }
+      ],
+      "ccq_pct": null,
+      "airtime_pct": {
+        "tx": null,
+        "rx": null,
+        "busy": 0.4
+      },
+      "tx_rate_mbps": 57.8,
+      "rx_rate_mbps": 115.6,
+      "stations": [],
+      "airmax": null,
+      "distance_m": 8700,
+      "mcs": null,
+      "signal_dbm": -69,
+      "polling_enabled": true,
+      "mac": "02:00:00:00:00:01",
+      "throughput_mbps": null,
+      "security": "WPA2",
+      "ssid_hidden": null,
+      "country_code": null,
+      "country_obey": null
+    },
+    "routing": null,
+    "services": {
+      "http": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "https": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "ssh": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "telnet": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "snmp": {
+        "enabled": null,
+        "port": null,
+        "community_present": null,
+        "community_is_default": null
+      },
+      "upnp": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "discovery": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "ntp": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "dhcp_client": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "dhcp_server": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      },
+      "pppoe": {
+        "enabled": null,
+        "port": null,
+        "listen_addresses": []
+      }
+    },
+    "dhcp": null,
+    "firewall": null,
+    "config": null,
+    "neighbors": []
+  },
+  "values": {
+    "airTime": "0.4",
+    "apMac": "02:00:00:00:00:02",
+    "boardCrc": "384a5f3f",
+    "cableLen": "18",
+    "centerFreq": "5285",
+    "cfgCrc": "9741cd30",
+    "chain0Signal": "-72",
+    "chain1Signal": "-72",
+    "chanbw": "20",
+    "cinr": "23",
+    "cpuUsage": "7.0",
+    "deviceId": "02:00:00:00:00:01",
+    "deviceIp": "192.0.2.1",
+    "deviceName": "fixture-host-1",
+    "distance": "8700",
+    "essid": "fixture-ssid-1",
+    "evm": "24",
+    "firmwareVersion": "WA.ar934x.v8.7.22.48486.260227.1959",
+    "freq": "5285",
+    "lanIpAddress": "192.0.2.2",
+    "lanPlugged": "1",
+    "lanRxBytes": "1359564653",
+    "lanRxErrors": "0",
+    "lanRxPackets": "7378805",
+    "lanSpeed": "100Mbps-Full",
+    "lanTxBytes": "29176530413",
+    "lanTxErrors": "0",
+    "lanTxPackets": "24063258",
+    "latitude": "0.000000",
+    "loadavg": "2",
+    "longitude": "0.000000",
+    "memBuffers": "3276",
+    "memFree": "19460",
+    "memTotal": "61960",
+    "netrole": "router",
+    "noise": "-89",
+    "platform": "LiteBeam 5AC Gen2",
+    "rxModRate": "6x",
+    "security": "WPA2",
+    "signal": "-69",
+    "status_flags": "4",
+    "txModRate": "4x",
+    "txPower": "24",
+    "uptime": "143405",
+    "wlanActualPriority": "Base",
+    "wlanConnections": "1",
+    "wlanDesiredPriority": "Base",
+    "wlanDownlinkCapacity": "56160",
+    "wlanIpAddress": "0.0.0.0",
+    "wlanOpmode": "sta-ptmp-ac",
+    "wlanPolling": "1",
+    "wlanRxBytes": "30569225040",
+    "wlanRxErrBmiss": "0",
+    "wlanRxErrCrypt": "0",
+    "wlanRxErrFrag": "0",
+    "wlanRxErrNwid": "0",
+    "wlanRxErrOther": "0",
+    "wlanRxErrRetries": "0",
+    "wlanRxErrors": "0",
+    "wlanRxPackets": "25287229",
+    "wlanRxRate": "115.6",
+    "wlanScanStatus": "0",
+    "wlanTxBytes": "1771597514",
+    "wlanTxErrors": "0",
+    "wlanTxLatency": "3",
+    "wlanTxPackets": "7478832",
+    "wlanTxRate": "57.8",
+    "wlanUplinkCapacity": "23400",
+    "wlanUptime": "143231"
+  }
+}

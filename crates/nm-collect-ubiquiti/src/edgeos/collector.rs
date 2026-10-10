@@ -79,6 +79,9 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
         let Some(a) = raw.iter().find(|a| a.name == artifact_name(*command)) else {
             continue;
         };
+        if coverage.missing.iter().any(|c| c == command.as_str()) {
+            continue;
+        }
         let b = &a.bytes;
         let parsed = match *command {
             edgeos::CONFIG_CMDS => parse::config_tree::parse(b),
@@ -332,7 +335,7 @@ impl Collector for EdgeOsCollector {
                     } else {
                         result.coverage.errors.insert(
                             command.as_str().into(),
-                            format!("exit {:?}; truncated {}", output.exit, output.truncated),
+                            crate::airos::collector::describe_exit(output.exit, output.truncated),
                         );
                         result.coverage.missing.push(command.as_str().into());
                     }

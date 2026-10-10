@@ -1,6 +1,7 @@
 # Spelling check for code, comments and docs: https://github.com/crate-ci/typos
 [files]
-extend-exclude = ["Cargo.lock", "LICENSE-*", "*.snap", "*.stderr"]
+# fixtures/ holds verbatim device output (`RTS thr:off`), not prose.
+extend-exclude = ["Cargo.lock", "LICENSE-*", "*.snap", "*.stderr", "fixtures/"]
 
 [default.extend-words]
 # ratatui is the TUI crate, not a misspelling of ratatouille.

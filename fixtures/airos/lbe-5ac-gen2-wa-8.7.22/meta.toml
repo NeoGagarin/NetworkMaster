@@ -1,0 +1,12 @@
+# Captured from a LiteBeam 5AC Gen2 (station) on airOS 8.7.22 during hardware
+# validation on 2026-10-10, then scrubbed and tokenized. Not synthetic.
+synthetic = false
+model = "LiteBeam 5AC Gen2"
+board = "LBE-5AC-Gen2"
+platform = "WA"
+firmware = "8.7.22"
+role = "station"
+captured = "2026-10-10"
+# mca-dump exited 127 on this build; the artifact is intentionally empty.
+missing = ["mca-dump"]
+exit_codes = { "mca-dump" = 127 }

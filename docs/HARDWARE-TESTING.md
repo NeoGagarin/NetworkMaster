@@ -8,8 +8,18 @@ The fixture directories `fixtures/airos/synthetic-xw-6.3.6` and `fixtures/airos/
 | Bench target | Commands present/missing | Per-command duration | Total duration | CPU impact | UI agreement |
 |---|---|---|---|---|---|
 | airOS 6.x AP/station | Pending | Pending | Pending | Pending | Pending |
+| airOS 8.7.22 station, LiteBeam 5AC Gen2 (LBE-5AC-Gen2), 2026-10-10 | 12 of 13 present; `mca-dump` exits 127 (absent). `/etc/version` is the short form `WA.v8.7.22` | 118 to 675 ms; `cat /etc/board.info` and `cat /tmp/system.cfg` slowest | 5.8 s including connect and first-use host key pin | Not measured in the radio UI; load average 0.02 before and after | Signal −69, chains −72/−72, noise −89, 5285 MHz at 20 MHz, TX 24 dBm, 8.7 km distance, LAN 100 Mbps full: all match the status page |
 | airOS 8.x AP | Pending | Pending | Pending | Pending | Pending |
 | Three enrolled stations | Pending | Pending | Pending | Pending | Pending |
+
+Findings from the first live capture, all fixed in the same change:
+
+- The scrubber only knew `wireless.N.wpa.psk`. The radio stored its WPA key under `aaa.1.wpa.psk` and `wpasupplicant.profile.1.network.1.psk`, and `unms.uri` embeds a UISP device token. Redaction is now by key segment (`psk`, `password`, `secret`, `community`, `key`, `token`, …) plus a short list of whole keys, not by spelling.
+- airOS 8 `mca-status` reports chains as `chain0Signal`/`chain1Signal`, CPU as `cpuUsage`, airtime as `airTime`, LAN as `lanSpeed=100Mbps-Full`, and a `loadavg` integer scaled by 100. The parser now maps the first four and ignores the last in favour of `/proc/loadavg`, which had been overwritten with 2.0 for a real load of 0.02.
+- Output of a command that exited non-zero is no longer parsed, so an absent command is reported as `exit 127: command not found on this firmware` rather than as a JSON parse error.
+- SSH negotiated a modern key exchange with an `ssh-rsa` host key without the legacy opt-in. The pin is per device, not per key type; watch for a spurious changed-key report if a later scan negotiates a different type.
+
+The capture is committed as `fixtures/airos/lbe-5ac-gen2-wa-8.7.22`, scrubbed and tokenized, with `meta.toml` recording the absent command.
 
 To perform acceptance, add the bench management addresses as candidates, assign session SSH profiles and enroll only the intended targets. Set known station roles where available, so `wstalist` is skipped. Run `netmaster scan --dry-run --json`, inspect the plan, then `netmaster scan --json`. Legacy negotiation requires `inventory allow-legacy <device-id>` or the TUI modal's explicit acknowledgement. Never reset a pin merely to make a scan pass.
 

@@ -56,6 +56,18 @@ pub fn artifact_name(command: SshCommand) -> &'static str {
         _ => unreachable!("only airOS allowlist commands"),
     }
 }
+/// Human-readable reason for a command that did not complete cleanly.
+pub fn describe_exit(exit: Option<u32>, truncated: bool) -> String {
+    match (exit, truncated) {
+        (_, true) => format!(
+            "output truncated at {} bytes",
+            nm_collect::ssh::OUTPUT_LIMIT
+        ),
+        (Some(127), _) => "exit 127: command not found on this firmware".into(),
+        (Some(code), _) => format!("exit {code}"),
+        (None, _) => "no exit status".into(),
+    }
+}
 pub fn empty_result(device: &Device) -> DeviceResult {
     DeviceResult {
         device_id: device.id,
@@ -95,6 +107,12 @@ pub fn parse_artifacts(raw: &[RawArtifact], coverage: &mut Coverage) -> DeviceFa
         let Some(bytes) = map.get(artifact_name(command)) else {
             continue;
         };
+        // A command that exited non-zero (127 means absent on this firmware)
+        // or was truncated is already recorded as missing; parsing its
+        // output would only replace that reason with a parse error.
+        if coverage.missing.iter().any(|c| c == command.as_str()) {
+            continue;
+        }
         let parsed = match command {
             airos::VERSION => parse::version::parse(bytes).map(|v| DeviceFacts {
                 system: SystemFacts {
@@ -354,7 +372,7 @@ impl Collector for AirOsCollector {
                     } else {
                         result.coverage.errors.insert(
                             command.as_str().into(),
-                            format!("exit {:?}; truncated {}", output.exit, output.truncated),
+                            describe_exit(output.exit, output.truncated),
                         );
                         result.coverage.missing.push(command.as_str().into());
                     }

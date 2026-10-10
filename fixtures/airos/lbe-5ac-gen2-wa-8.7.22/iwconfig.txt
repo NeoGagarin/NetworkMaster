@@ -1,0 +1,22 @@
+ath0      IEEE 802.11ac  ESSID:"fixture-ssid-1"  
+          Mode:Managed  Frequency:5.285 GHz  Access Point: 02:00:00:00:00:02   
+          Bit Rate:57.8 kb/s   Tx-Power=24 dBm   
+          RTS thr:off   Fragment thr:off
+          Center1-Freq: 5.285 GHz
+          Encryption key:off
+          Power Management:off
+          Link Quality=27/94  Signal level=-69 dBm  Noise level=-89 dBm
+          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:0  Invalid misc:0   Missed beacon:0
+
+airview1  IEEE 802.11na  ESSID:"fixture-ssid-2"  
+          Mode:Monitor  Frequency:4.92 GHz  Access Point: Not-Associated   
+          Bit Rate:130 Mb/s   Tx-Power:13 dBm   
+          RTS thr:off   Fragment thr:off
+          Center1-Freq: 4.92 GHz
+          Encryption key:off
+          Power Management:off
+          Link Quality=0/94  Signal level=-96 dBm  Noise level=-107 dBm
+          Rx invalid nwid:0  Rx invalid crypt:0  Rx invalid frag:0
+          Tx excessive retries:0  Invalid misc:0   Missed beacon:0
+

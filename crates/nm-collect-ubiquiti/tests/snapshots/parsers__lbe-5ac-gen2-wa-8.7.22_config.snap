@@ -1,0 +1,175 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 99
+expression: "parse::system_cfg::parse(&read(\"system.cfg\")).expect(concat!\n(\"config\", \" must parse\"))"
+---
+{
+  "system": {
+    "hostname": "fixture-host-1",
+    "model": null,
+    "firmware": null,
+    "uptime_seconds": null,
+    "loadavg": null,
+    "cpu_count": null,
+    "memory": null,
+    "serial": null,
+    "ntp_servers": [
+      "time1.google.com"
+    ],
+    "offload": null,
+    "ssh_host_key_changed": null,
+    "ssh_legacy_algorithms": null,
+    "cpu_load_pct": null,
+    "genuine": null,
+    "platform": null,
+    "soc": null,
+    "firmware_build": null,
+    "board_id": null,
+    "netrole": "router"
+  },
+  "interfaces": [
+    {
+      "name": "ath0",
+      "mac": null,
+      "description": null,
+      "admin_up": true,
+      "oper_up": null,
+      "speed_mbps": null,
+      "duplex": null,
+      "counters": null,
+      "addresses": [],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    },
+    {
+      "name": "eth0",
+      "mac": null,
+      "description": null,
+      "admin_up": true,
+      "oper_up": null,
+      "speed_mbps": null,
+      "duplex": null,
+      "counters": null,
+      "addresses": [
+        "192.0.2.2/255.255.255.0"
+      ],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    },
+    {
+      "name": "br0",
+      "mac": null,
+      "description": null,
+      "admin_up": true,
+      "oper_up": null,
+      "speed_mbps": null,
+      "duplex": null,
+      "counters": null,
+      "addresses": [],
+      "role": null,
+      "role_confidence": null,
+      "firewall_in": null,
+      "firewall_out": null,
+      "firewall_local": null
+    }
+  ],
+  "addresses": [],
+  "radio": {
+    "mode": null,
+    "ssid": "fixture-ssid-1",
+    "frequency_mhz": 5285,
+    "channel_width_mhz": 0,
+    "tx_power_dbm": 24,
+    "noise_floor_dbm": null,
+    "chains": [],
+    "ccq_pct": null,
+    "airtime_pct": null,
+    "tx_rate_mbps": null,
+    "rx_rate_mbps": null,
+    "stations": [],
+    "airmax": null,
+    "distance_m": null,
+    "mcs": null,
+    "signal_dbm": null,
+    "polling_enabled": null,
+    "mac": null,
+    "throughput_mbps": null,
+    "security": null,
+    "ssid_hidden": false,
+    "country_code": 511,
+    "country_obey": true
+  },
+  "routing": null,
+  "services": {
+    "http": {
+      "enabled": true,
+      "port": 80,
+      "listen_addresses": []
+    },
+    "https": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ssh": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "telnet": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "snmp": {
+      "enabled": false,
+      "port": null,
+      "community_present": true,
+      "community_is_default": null
+    },
+    "upnp": {
+      "enabled": false,
+      "port": null,
+      "listen_addresses": []
+    },
+    "discovery": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "ntp": {
+      "enabled": true,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_client": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "dhcp_server": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    },
+    "pppoe": {
+      "enabled": null,
+      "port": null,
+      "listen_addresses": []
+    }
+  },
+  "dhcp": null,
+  "firewall": null,
+  "config": {
+    "format": "KeyValue",
+    "text": "aaa.1.radius.acct.1.port=1813\naaa.1.radius.acct.1.status=disabled\naaa.1.radius.auth.1.port=1812\naaa.1.status=disabled\naaa.1.wpa.psk=<redacted>\naaa.status=disabled\nairview.status=enabled\nbridge.1.devname=br0\nbridge.1.port.1.devname=ath0\nbridge.1.port.1.status=enabled\nbridge.1.status=enabled\nbridge.1.stp.status=disabled\nbridge.status=enabled\ndhcpc.1.devname=br0\ndhcpc.1.fallback=192.0.2.5\ndhcpc.1.fallback_netmask=255.255.255.0\ndhcpc.1.status=enabled\ndhcpc.status=enabled\ndhcpd.1.devname=eth0\ndhcpd.1.dhcpreserv.1.comment=fixture-reservation\ndhcpd.1.dhcpreserv.1.ip=192.0.2.6\ndhcpd.1.dhcpreserv.1.mac=02:00:00:00:00:07\ndhcpd.1.dhcpreserv.1.status=enabled\ndhcpd.1.dnsproxy=enabled\ndhcpd.1.end=192.0.2.7\ndhcpd.1.lease_time=600\ndhcpd.1.netmask=255.255.255.0\ndhcpd.1.start=192.0.2.8\ndhcpd.1.status=enabled\ndhcpd.status=enabled\ndiscovery.beacon.status=enabled\ndiscovery.cdp.status=disabled\ndiscovery.lldp.status=enabled\ndiscovery.status=enabled\ndnsmasq.1.devname=eth0\ndnsmasq.1.status=enabled\ndnsmasq.status=enabled\nebtables.status=enabled\nebtables.sys.eap.1.devname=ath0\nebtables.sys.eap.1.status=enabled\nebtables.sys.eap.status=enabled\nebtables.sys.status=enabled\ngui.language=en_US\ngui.network.advanced.status=enabled\nhttpd.https.port=443\nhttpd.https.status=enabled\nhttpd.port=80\nhttpd.session.timeout=900\nhttpd.status=enabled\nigmpproxy.status=disabled\nigmpproxy.upstream.devname=br0\nip6tables.status=enabled\nip6tables.sys.fw6.status=disabled\nip6tables.sys.status=enabled\niptables.status=enabled\niptables.sys.fw.status=disabled\niptables.sys.masq.1.devname=br0\niptables.sys.masq.1.status=enabled\niptables.sys.masq.status=enabled\niptables.sys.portfw.status=disabled\niptables.sys.status=enabled\nnetconf.1.autoip.status=disabled\nnetconf.1.devname=ath0\nnetconf.1.mtu=1500\nnetconf.1.status=enabled\nnetconf.1.up=enabled\nnetconf.2.autoip.status=disabled\nnetconf.2.autoneg=enabled\nnetconf.2.devname=eth0\nnetconf.2.flowcontrol.rx.status=enabled\nnetconf.2.flowcontrol.tx.status=enabled\nnetconf.2.ip=192.0.2.2\nnetconf.2.mtu=1500\nnetconf.2.netmask=255.255.255.0\nnetconf.2.role=lan\nnetconf.2.status=enabled\nnetconf.2.up=enabled\nnetconf.3.autoip.status=disabled\nnetconf.3.devname=br0\nnetconf.3.mtu=1500\nnetconf.3.role=wan\nnetconf.3.status=enabled\nnetconf.status=enabled\nnetmode=router\nntpclient.1.server=time1.google.com\nntpclient.1.status=enabled\nntpclient.status=enabled\npppoe-relay.status=disabled\npwdog.delay=<redacted>\npwdog.period=<redacted>\npwdog.retry=<redacted>\npwdog.status=<redacted>\nradio.1.ack.auto=enabled\nradio.1.ackdistance=600\nradio.1.acktimeout=35\nradio.1.antenna.gain=23\nradio.1.antenna.id=1\nradio.1.atpc.sta.status=disabled\nradio.1.atpc.status=disabled\nradio.1.atpc.threshold=36\nradio.1.cable.loss=0\nradio.1.center.1.freq=5285\nradio.1.chanbw=0\nradio.1.cmsbias=0\nradio.1.countrycode=511\nradio.1.cwm.enable=0\nradio.1.cwm.mode=1\nradio.1.devname=ath0\nradio.1.dfs.slave=1\nradio.1.dfs.status=enabled\nradio.1.ff_cap_rep=0\nradio.1.freq=5285\nradio.1.ieee_mode=auto\nradio.1.low_txpower_mode=disabled\nradio.1.mode=managed\nradio.1.obey=enabled\nradio.1.polling=enabled\nradio.1.polling_ff_dl_ratio=50\nradio.1.polling_ff_dur=0\nradio.1.polling_ff_flex=0\nradio.1.polling_ff_sta_rx_rssi_th=0\nradio.1.pollingnoack=0\nradio.1.pollingpri=2\nradio.1.ptpmode=0\nradio.1.rc_mode=1\nradio.1.reg_obey=disabled\nradio.1.rx_sensitivity=-96\nradio.1.scan_list.channels=5285,5375\nradio.1.scan_list.status=disabled\nradio.1.scanbw.status=disabled\nradio.1.status=enabled\nradio.1.txpower=24\nradio.countrycode=511\nradio.status=enabled\nresolv.host.1.name=fixture-host-1\nresolv.host.1.status=enabled\nresolv.nameserver.status=enabled\nsnmp.community=<redacted>\nsnmp.contact=\nsnmp.location=\nsnmp.status=disabled\nsshd.auth.passwd=<redacted>\nsshd.port=22\nsshd.status=enabled\nsyslog.remote.port=514\nsyslog.remote.status=disabled\nsyslog.status=enabled\nsystem.airosx.prov.status=disabled\nsystem.autosend_crash_reports=disabled\n@000000-00000000000000000000000000000000\nsystem.cfg.editor.webui=2025-10-25T02:22:47.169Z\nsystem.cfg.version=65547\nsystem.date.status=disabled\nsystem.external.reset=enabled\nsystem.leds.nightmode=disabled\nsystem.timezone=WST-8\ntelnetd.port=23\ntelnetd.status=disabled\ntshaper.1.devname=ath0\ntshaper.1.input.status=disabled\ntshaper.1.output.burst=512\ntshaper.1.output.rate=4600\ntshaper.1.output.status=enabled\ntshaper.1.status=enabled\ntshaper.2.devname=eth0\ntshaper.2.input.status=disabled\ntshaper.2.output.burst=1024\ntshaper.2.output.rate=9200\ntshaper.2.output.status=enabled\ntshaper.2.status=enabled\ntshaper.status=enabled\nunms.status=enabled\nunms.ui_url=https://192.0.2.9\nunms.uri=<redacted>\nupdate.check.status=enabled\nupnpd.status=disabled\nusers.1.name=fixture-user\nusers.1.password=<redacted>\nusers.1.status=enabled\nusers.2.gid=100\nusers.2.shell=/bin/false\nusers.2.status=disabled\nusers.2.uid=100\nusers.status=enabled\nwireless.1.ampdu.frames=32\nwireless.1.ampdu.status=enabled\nwireless.1.amsdu=3\nwireless.1.devname=ath0\nwireless.1.hide_ssid=disabled\nwireless.1.l2_isolation=disabled\nwireless.1.mac_acl.policy=allow\nwireless.1.mac_acl.status=disabled\nwireless.1.mcast.enhance=0\nwireless.1.rate.auto=enabled\nwireless.1.rate.mcs=-1\nwireless.1.security.type=none\nwireless.1.ssid=fixture-ssid-1\nwireless.1.status=enabled\nwireless.1.wds.status=enabled\nwireless.status=enabled\nwpasupplicant.device.1.devname=ath0\nwpasupplicant.device.1.profile=AUTO\nwpasupplicant.device.1.status=enabled\nwpasupplicant.profile.1.name=AUTO\nwpasupplicant.profile.1.network.1.eap.1.status=disabled\nwpasupplicant.profile.1.network.1.key_mgmt.1.name=WPA-PSK\nwpasupplicant.profile.1.network.1.pairwise.1.name=CCMP\nwpasupplicant.profile.1.network.1.priority=100\nwpasupplicant.profile.1.network.1.proto.1.name=RSN\nwpasupplicant.profile.1.network.1.psk=<redacted>\nwpasupplicant.profile.1.network.1.ssid=fixture-ssid-1\nwpasupplicant.profile.1.network.1.status=enabled\nwpasupplicant.profile.1.network.2.key_mgmt.1.name=NONE\nwpasupplicant.profile.1.network.2.priority=2\nwpasupplicant.profile.1.network.2.status=disabled\nwpasupplicant.status=enabled\n",
+    "secrets_removed": 0
+  },
+  "neighbors": []
+}

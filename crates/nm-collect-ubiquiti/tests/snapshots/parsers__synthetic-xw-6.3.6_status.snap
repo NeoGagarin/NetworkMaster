@@ -1,6 +1,7 @@
 ---
 source: crates/nm-collect-ubiquiti/tests/parsers.rs
-expression: "parse::mca_status::parse(&read(\"mca-status.txt\")).unwrap()"
+assertion_line: 82
+expression: "parse::mca_status::parse(&read(\"mca-status.txt\")).expect(concat!\n(\"status\", \" must parse\"))"
 ---
 {
   "facts": {
@@ -9,11 +10,7 @@ expression: "parse::mca_status::parse(&read(\"mca-status.txt\")).unwrap()"
       "model": null,
       "firmware": "XW.ar934x.v6.3.6",
       "uptime_seconds": 183840,
-      "loadavg": {
-        "one_min": 0.1,
-        "five_min": 0.2,
-        "fifteen_min": 0.3
-      },
+      "loadavg": null,
       "cpu_count": null,
       "memory": {
         "total_bytes": 67108864,

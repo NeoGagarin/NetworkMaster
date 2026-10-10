@@ -1,5 +1,6 @@
 ---
 source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 140
 expression: facts
 ---
 {
@@ -237,7 +238,7 @@ expression: facts
   "config": {
     "format": "KeyValue",
     "text": "sshd.status=enabled\ntelnetd.status=disabled\nhttpd.status=enabled\nhttpd.https.status=enabled\nhttpd.port=80\nsnmp.status=enabled\nsnmp.community=<redacted>\ndiscovery.status=disabled\nntpclient.status=enabled\nntpclient.1.server=192.0.2.10\nupnpd.status=disabled\nnetmode=bridge\nwireless.1.ssid=fixture-ssid-1\nwireless.1.security=wpa2\nwireless.1.hide_ssid=disabled\nradio.1.freq=5805\nradio.1.chanbw=20\nradio.1.txpower=18\nradio.1.countrycode=608\nradio.1.obey=enabled\nusers.1.name=operator\nusers.1.password=<redacted>\nresolv.host.1.name=fixture-host-1\nnetconf.1.devname=eth0\nnetconf.1.ip=192.0.2.1\nnetconf.1.netmask=255.255.255.0\nnetconf.1.status=enabled\nroute.1.ip=0.0.0.0\nroute.1.gateway=192.0.2.254\nroute.1.devname=eth0\n",
-    "secrets_removed": 2
+    "secrets_removed": 0
   },
   "neighbors": [
     {

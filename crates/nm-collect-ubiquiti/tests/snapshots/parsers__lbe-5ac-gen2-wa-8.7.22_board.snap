@@ -1,0 +1,12 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 77
+expression: "parse::board_info::parse(&read(\"board-info.txt\")).expect(concat!\n(\"board\", \" must parse\"))"
+---
+{
+  "sysid": "0xe7f9",
+  "name": "LiteBeam 5AC",
+  "shortname": "L5C",
+  "hwaddr": "020000000001",
+  "subtype": null
+}

@@ -6,7 +6,7 @@ pub mod hostkeys {
 mod runner;
 pub use algos::preferred;
 pub use client::{SshSession, SshTransport};
-pub use runner::CommandOutput;
+pub use runner::{CommandOutput, OUTPUT_LIMIT};
 
 #[derive(Debug, thiserror::Error)]
 pub enum SshError {

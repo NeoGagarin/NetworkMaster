@@ -11,6 +11,11 @@ All notable changes are documented here, following [Keep a Changelog](https://ke
 
 ### Fixed
 
+- Secret scrubbing is now by key segment and no longer depends on a list of key spellings. A live LiteBeam 5AC Gen2 stored its WPA pre-shared key under `aaa.1.wpa.psk` and a `wpasupplicant` profile, and its UISP URI embedded a device token; none of those were redacted before.
+- airOS 8 `mca-status` fields are mapped as the firmware actually prints them: per-chain signal, CPU usage, airtime, LAN speed and duplex, LAN and WLAN counters, composite operating modes such as `sta-ptmp-ac`. The scaled `loadavg` integer is ignored in favour of `/proc/loadavg`, which it had been overwriting.
+- `/etc/version` on airOS 8 is the short `WA.v8.7.22` form and now parses.
+- Output of a command that exited non-zero is no longer parsed, so an absent command is reported as not found instead of as a parse error.
+- The fixture tokenizer no longer treats `hide_ssid=disabled` as an SSID and keeps loopback, masks and broadcast addresses.
 - The forbidden-command test now rejects shell metacharacters, interpreters and privilege escalation (`| & ; $() < >`, `sudo`, `sh`, `tee`, `sed`, `chmod`, …), not only mutating verbs.
 - A parser disagreement while merging interface facts is recorded as a coverage error instead of panicking the whole scan job.
 - The analysis migration quotes its JSON default as a string literal.

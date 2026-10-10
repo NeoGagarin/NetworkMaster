@@ -1,0 +1,21 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 119
+expression: "parse::arp::parse(&read(\"arp.txt\")).expect(concat! (\"arp\", \" must parse\"))"
+---
+[
+  {
+    "protocol": "arp",
+    "mac": "02:00:00:00:00:08",
+    "address": "192.0.2.10",
+    "hostname": null,
+    "interface": "br0"
+  },
+  {
+    "protocol": "arp",
+    "mac": "02:00:00:00:00:09",
+    "address": "192.0.2.11",
+    "hostname": null,
+    "interface": "eth0"
+  }
+]

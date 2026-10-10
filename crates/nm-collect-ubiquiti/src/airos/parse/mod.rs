@@ -66,11 +66,26 @@ pub(super) fn flag(v: &Value) -> Option<bool> {
         .or_else(|| v.as_u64().map(|n| n != 0))
 }
 pub(super) fn mode(v: &Value) -> Option<RadioMode> {
-    match v.as_str()? {
-        "ap" | "AP" | "aprepeater" | "3" => Some(RadioMode::Ap),
-        "sta" | "station" | "1" => Some(RadioMode::Station),
+    // airOS 8 reports composite modes such as `sta-ptmp-ac`, `ap-ptp-ac`
+    // and `ap-ptmp-ac` (observed on a `LiteBeam 5AC Gen2`); airOS 6 uses the
+    // bare words and numeric codes.
+    let s = v.as_str()?.to_ascii_lowercase();
+    let ptp = s.contains("ptp") && !s.contains("ptmp");
+    match s.as_str() {
         "ptp-master" => Some(RadioMode::PtpMaster),
         "ptp-slave" => Some(RadioMode::PtpSlave),
+        "3" => Some(RadioMode::Ap),
+        "1" => Some(RadioMode::Station),
+        _ if s.starts_with("ap") => Some(if ptp {
+            RadioMode::PtpMaster
+        } else {
+            RadioMode::Ap
+        }),
+        _ if s.starts_with("sta") => Some(if ptp {
+            RadioMode::PtpSlave
+        } else {
+            RadioMode::Station
+        }),
         _ => None,
     }
 }

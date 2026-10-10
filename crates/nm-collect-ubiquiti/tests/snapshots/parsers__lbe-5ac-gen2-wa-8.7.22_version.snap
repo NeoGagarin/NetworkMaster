@@ -1,0 +1,11 @@
+---
+source: crates/nm-collect-ubiquiti/tests/parsers.rs
+assertion_line: 72
+expression: "parse::version::parse(&read(\"version.txt\")).expect(concat!\n(\"version\", \" must parse\"))"
+---
+{
+  "platform": "WA",
+  "soc": "",
+  "version": "8.7.22",
+  "build": ""
+}
